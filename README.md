@@ -20,6 +20,7 @@
 - Now open browser and go to `localhost:3000`, you should see 'Homepage'
 - Go to `localhost:3000/departments` and you should see the newly created department
 
+### Regular Usage  
 When you edit files they will automatically be updated in the docker containers and the server will restart, no need to do anything other than edit and save.
 
 To stop the docker-compose just hit `ctrl + c` in terminal or command prompt where it is running.
@@ -28,3 +29,23 @@ To start it up anytime after the inital set-up just run `docker-compose up`, no 
 
 ### Additional Tools
 - [Postman](https://www.getpostman.com/) for sending post requests to routes. This will allow you to send fake data to test routes that create or edit rows in the database.
+
+### Process For Making Changes (Instructions Only For Terminal)
+1. Start from clean project directory, check this by running `git status`. You should see 
+    ``` bash
+    On branch master
+    nothing to commit, working tree clean
+    ```
+2. Create and switch to new branch by running `git checkout -b <new_feature_name>`. This is the equivalent to 
+    ``` bash
+    git branch <new_feature_name>
+    git checkout <new_feature_name>
+    ```
+3. Run `git status` and you should see
+    ``` bash
+    On branch <new_feature_name>
+    nothing to commit, working tree clean
+    ```
+4. Make changes, commiting regularly so you can easily rollback any breaking changes. 
+5. Once feauture is complete and working as expected, commit any remaining changes and run `git push origin <new_feature_name>`. This will push your branch up to github.
+6. From [github](https://github.com/Database3380/ProjectManager) switch to your newly created branch and click `New Pull Request`
