@@ -15,9 +15,9 @@
 - You will be inside the node server container now, run `npm install bcrypt` and then `exit`
 - Copy container_id for the image named dbproj_db
 - Run `docker exec -it <container_id> bash`
-- You will be inside the database container now, run `psql -U postgres postgres < /docker-entrypoint-initdb.d/schema.sql`
-- Run `psql -U postgres` then `INSERT INTO departments (name) VALUES ('Human Resources');` then `\q` then `exit`
-- Now go to browser and go to `localhost:3000`, you should see 'Homepage'
+- Run `psql -U postgres` and check if the relations exist by running `\dt`
+- Run `INSERT INTO departments (name) VALUES ('Human Resources');` then `\q` then `exit`
+- Now open browser and go to `localhost:3000`, you should see 'Homepage'
 - Go to `localhost:3000/departments` and you should see the newly created department
 
 When you edit files they will automatically be updated in the docker containers and the server will restart, no need to do anything other than edit and save.
@@ -26,3 +26,5 @@ To stop the docker-compose just hit `ctrl + c` in terminal or command prompt whe
 
 To start it up anytime after the inital set-up just run `docker-compose up`, no need to do any of the other steps.
 
+### Additional Tools
+- [Postman](https://www.getpostman.com/) for sending post requests to routes. This will allow you to send fake data to test routes that create or edit rows in the database.
