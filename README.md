@@ -16,7 +16,7 @@
 - Copy container_id for the image named dbproj_db
 - Run `docker exec -it <container_id> bash`
 - You will be inside the database container now, run `psql -U postgres postgres < /docker-entrypoint-initdb.d/schema.sql`
-- Run `psql -U postgres` then `INSERT INTO departments (name) VALUES ('Human Resources');` and then `exit`
+- Run `psql -U postgres` then `INSERT INTO departments (name) VALUES ('Human Resources');` then `\q` then `exit`
 - Now go to browser and go to `localhost:3000`, you should see 'Homepage'
 - Go to `localhost:3000/departments` and you should see the newly created department
 
