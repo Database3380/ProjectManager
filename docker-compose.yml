@@ -1,0 +1,28 @@
+version: '2'
+services:  
+  dbproject:
+    build: 
+      context: .
+      dockerfile: Dockerfile.web
+    depends_on:
+      - db
+    command: nodemon ./bin/www
+    environment:
+      NODE_ENV: development
+      PGHOST: db
+      PGDATABASE: postgres
+      PGUSER: postgres
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/home/app/dbproject
+      - /home/app/dbproject/node_modules
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    volumes:
+      - db-data:/data/postgres
+volumes:
+  db-data:
+    driver: local

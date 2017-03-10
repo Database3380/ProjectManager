@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  ul
+    each result in results
+      hr
+      each value, key in result
+        if value
+          p #{key}:  #{value}
