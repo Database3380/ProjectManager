@@ -1,4 +1,8 @@
+/********************************************************/
+// Model Imports
 var Model = require('./model');
+/********************************************************/
+
 
 var Project = function (project) {
     this.id = project.id;

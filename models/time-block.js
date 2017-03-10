@@ -1,4 +1,8 @@
+/********************************************************/
+// Model Imports
 var Model = require('./model');
+/********************************************************/
+
 
 var TimeBlock = function (timeBlock) {
     this.id = timeBlock.id;

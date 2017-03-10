@@ -1,9 +1,14 @@
+/********************************************************/
+// Package Imports
 var Promise = require('promise');
 var pg = require('pg');
 var pool = new pg.Pool();
 
+// Util Imports
 var operators = require('../util/constants/operators');
 var snakeCase = require('../util/functions/snake-case');
+/********************************************************/
+
 
 /****************************************************************************************************
  * Model Object Prototype
@@ -14,6 +19,7 @@ var snakeCase = require('../util/functions/snake-case');
  * - Static properties are used for querying the database to retrieve models of that typeof.
  * - Dynamic properties are used for querying the database in relation to a specific instance of a model.
  ****************************************************************************************************/
+
 
 /**
  * Dyanmic Model Constructor
@@ -29,6 +35,9 @@ Model.prototype.hasMany = function (model, success, error) {
     return model.where(`${this.constructor.name.toLowerCase()}_id`, this.id).get(success, error);
 }
 
+Model.prototype.belongsTo = function (model, success, error) {
+    return model.where('id', this[`${model.name.toLowerCase()}Id`]).limit(1).get(success, error);
+}
 
 /************************
  * Static Properties
@@ -70,7 +79,7 @@ Model.select = function (fields) {
         }, this);
     }
 
-    this.query += `FROM ${this.name.toLowerCase()}s`;
+    this.query += `FROM ${snakeCase(this.name)}s`;
 
     return this;
 }
@@ -90,7 +99,7 @@ Model.select = function (fields) {
  */
 Model.where = function (column, operator, value) {
     if (!this.query.includes('SELECT')) {
-        this.query = `SELECT * FROM ${this.name.toLowerCase()}s`;
+        this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
     }
 
     this.query += ` WHERE ${column} `;
@@ -117,7 +126,7 @@ Model.where = function (column, operator, value) {
  */
 Model.limit = function (limit) {
     if (!this.query.includes('SELECT')) {
-        this.query = `SELECT * FROM ${this.name.toLowerCase()}s`;
+        this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
     }
 
     this.query += ` LIMIT ${limit}`;
@@ -147,7 +156,7 @@ Model.limit = function (limit) {
  */
 Model.get = function (success, error) {
     if (!this.query.includes('SELECT')) {
-        this.query = `SELECT * FROM ${this.name.toLowerCase()}s`;
+        this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
     }
 
     var hydrate = this.hydrate.bind(this);
@@ -182,7 +191,7 @@ Model.get = function (success, error) {
  *      }
  */
 Model.create = function (tuple, success, error) {
-    this.query = `INSERT INTO ${this.name.toLowerCase()}s (`;
+    this.query = `INSERT INTO ${snakeCase(this.name)}s (`;
 
     let keys = Object.keys(tuple);
     let values = '';

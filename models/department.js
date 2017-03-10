@@ -1,4 +1,8 @@
+/********************************************************/
+// Model Imports
 var Model = require('./model');
+/********************************************************/
+
 
 var Department = function(department) {
     this.id = department.id;
