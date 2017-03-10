@@ -1,5 +1,14 @@
+/********************************************************/
+// Package Imports
 var router = require('express').Router();
+var curry = require('curry');
+
+// Util Imports
+var handler = require('../util/errors/handler');
+
+// Model Imports
 var Department = require('../models/department');
+/********************************************************/
 
 
 /* Get Departments */
@@ -10,10 +19,7 @@ router.get('/', function (req, res, next) {
         res.render('index', { title: 'Departments', results: departments });
     }
 
-    var error = function (err) {
-        console.log(err);
-        return next(new Error([err]));
-    }
+    var error = curry(handler)(next);
 
     Department.get( success, error );
 });
@@ -27,10 +33,7 @@ router.post('/', function (req, res, next) {
         res.json(result);
     }
 
-    const error = function (err) {
-        console.log(err);
-        return next(new Error([err]));
-    }
+    var error = curry(handler)(next);
 
     Department.create(department, success, error);
 });
@@ -44,10 +47,7 @@ router.get('/:id', function (req, res, next) {
       res.render('index', { title: `Department with id = ${id}`, results: department });
   }
 
-  const error = function (err) {
-      console.log(err);
-      return next(new Error([err]));
-  }
+  var error = curry(handler)(next);
 
   Department.where('id', id).limit(1).get(success, error);
 });
