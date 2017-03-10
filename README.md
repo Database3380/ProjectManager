@@ -32,17 +32,17 @@ To start it up anytime after the inital set-up just run `docker-compose up`, no 
 
 ### Process For Making Changes (Instructions Only For Terminal)
 1. Start from clean project directory, check this by running `git status`. You should see 
-    ``` bash
+    ```  
     On branch master
     nothing to commit, working tree clean
     ```
 2. Create and switch to new branch by running `git checkout -b <new_feature_name>`. This is the equivalent to 
-    ``` bash
+    ```  
     git branch <new_feature_name>
     git checkout <new_feature_name>
     ```
 3. Run `git status` and you should see
-    ``` bash
+    ```      
     On branch <new_feature_name>
     nothing to commit, working tree clean
     ```
@@ -51,7 +51,7 @@ To start it up anytime after the inital set-up just run `docker-compose up`, no 
 6. From [github](https://github.com/Database3380/ProjectManager) switch to your newly created branch and click `New Pull Request`. Add any comments needed and then `Create Pull Request`
 7. Do not merge pull request, we will review pull requests as a team to make sure there are no changes that are incompatible with planned features.
 8. Once pull request has been merged you can dispose of the branch if no longer needed. This can be done by running 
-    ``` bash
+    ```  
     git checkout master
     git push origin --delete <new_feature_name>
     git branch -d <new_feature_name>
