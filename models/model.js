@@ -25,8 +25,8 @@ var Model = function () {
 /***************************
  * Dynamic Model Methods
  ***************************/
-Model.prototype.queryString = function () {
-    console.log(this.query);
+Model.prototype.hasMany = function (model, success, error) {
+    return model.where(`${this.constructor.name.toLowerCase()}_id`, this.id).get(success, error);
 }
 
 

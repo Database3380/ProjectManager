@@ -9,6 +9,9 @@ var Department = function(department) {
 // Get prototype methods from Model
 Department.prototype = new Model;
 
+//Set constructor for reference in Model functions
+Department.prototype.constructor = Department;
+
 // Get static methods from Model
 Object.assign(Department, Model);
 

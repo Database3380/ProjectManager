@@ -11,6 +11,8 @@ var Task = function(task) {
 
 Task.prototype = new Model;
 
+Task.prototype.constructor = Task;
+
 Object.assign(Task, Model);
 
 module.exports = Task;

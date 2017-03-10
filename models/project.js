@@ -12,6 +12,8 @@ var Project = function (project) {
 
 Project.prototype = new Model;
 
+Project.prototype.constructor = Project;
+
 Object.assign(Project, Model);
 
 module.exports = Project;

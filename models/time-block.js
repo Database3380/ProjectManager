@@ -12,6 +12,8 @@ var TimeBlock = function (timeBlock) {
 
 TimeBlock.prototype = new Model;
 
+TimeBlock.prototype.constructor = TimeBlock;
+
 Object.assign(TimeBlock, Model);
 
 module.exports = TimeBlock;
