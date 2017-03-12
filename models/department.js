@@ -1,4 +1,8 @@
+/********************************************************/
+// Model Imports
 var Model = require('./model');
+/********************************************************/
+
 
 var Department = function(department) {
     this.id = department.id;
@@ -8,6 +12,9 @@ var Department = function(department) {
 
 // Get prototype methods from Model
 Department.prototype = new Model;
+
+//Set constructor for reference in Model functions
+Department.prototype.constructor = Department;
 
 // Get static methods from Model
 Object.assign(Department, Model);

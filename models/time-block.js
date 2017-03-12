@@ -1,4 +1,8 @@
+/********************************************************/
+// Model Imports
 var Model = require('./model');
+/********************************************************/
+
 
 var TimeBlock = function (timeBlock) {
     this.id = timeBlock.id;
@@ -11,6 +15,8 @@ var TimeBlock = function (timeBlock) {
 }
 
 TimeBlock.prototype = new Model;
+
+TimeBlock.prototype.constructor = TimeBlock;
 
 Object.assign(TimeBlock, Model);
 

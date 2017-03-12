@@ -160,7 +160,7 @@ CREATE TABLE time_blocks (
     task_id integer NOT NULL,
     project_id integer NOT NULL,
     start_time timestamp with time zone NOT NULL,
-    end_time timestamp with time zone NOT NULL
+    end_time timestamp with time zone
 );
 
 
