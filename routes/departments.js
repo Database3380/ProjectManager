@@ -11,6 +11,8 @@ var Department = require('../models/department');
 /********************************************************/
 
 
+// This is a test comment. Henry Chau
+
 /* Get Departments */
 router.get('/', function (req, res, next) {
     
