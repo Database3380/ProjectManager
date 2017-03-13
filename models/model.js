@@ -31,12 +31,12 @@ var Model = function () {
 /***************************
  * Dynamic Model Methods
  ***************************/
-Model.prototype.hasMany = function (model, success, error) {
-    return model.where(`${this.constructor.name.toLowerCase()}_id`, this.id).get(success, error);
+Model.prototype.hasMany = function (model) {
+    return model.where(`${this.constructor.name.toLowerCase()}_id`, this.id);
 }
 
-Model.prototype.belongsTo = function (model, success, error) {
-    return model.where('id', this[`${model.name.toLowerCase()}Id`]).limit(1).get(success, error);
+Model.prototype.belongsTo = function (model) {
+    return model.where('id', this[`${model.name.toLowerCase()}Id`]).limit(1);
 }
 
 /************************
@@ -139,35 +139,27 @@ Model.limit = function (limit) {
  * must be called at the end of every query build
  * will automatically add the select * clause to query if not already added 
  * 
- * success and error parameters are the functions to be used when resolving the
- * asynchronous promise needed to query database
- * 
- * @param {function} success | required
- * success is passed an array of results from the executed query
- * EX: success(results) {
- *          console.log(results);
- *      }
- * 
- * @param {function} error   | required
- * error is passed an error object created by query execution
- * EX: error(err) {
- *          console.log(err);
- *      }
+ * @return {array} hydrated results, typeof calling model
  */
-Model.get = function (success, error) {
+Model.get = async function (instance = false) {
     if (!this.query.includes('SELECT')) {
         this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
     }
-
-    var hydrate = this.hydrate.bind(this);
-
-    const q = this.promise(this.query, hydrate);
-
-    q.then(success).catch(error);
     
+    try {
+        var result = await pool.query(this.query);
+    } catch (err) {
+        throw err;
+    } 
+
     this.query = '';
+
+    return instance ? this.hydrate(result.rows)[0] : this.hydrate(result.rows);
 }
 
+Model.first = function () {
+    return this.get(true);
+}
 
 /**
  * create() is used to store a new tuple of the calling models type
@@ -175,53 +167,32 @@ Model.get = function (success, error) {
  * tuple is an object composed of all the necessary key => value pairs to create a new tuple in db
  * tuple key names will be automatically converted from camelCase to snake_case to be aligned with database attribute names
  * 
- * success and error parameters are the functions to be used when resolving the
- * asynchronous promise needed to query database
- * 
- * @param {object} tuple     | required
- * @param {function} success | required
- * success is passed an array of results from the executed query
- * EX: success(results) {
- *          console.log(results);
- *      }
- * @param {function} error   | required
- * error is passed an error object created by query execution
- * EX: error(err) {
- *          console.log(err);
- *      }
+ * @return {object} single hydrated model from tuple, typeof calling model
  */
-Model.create = function (tuple, success, error) {
-    this.query = `INSERT INTO ${snakeCase(this.name)}s (`;
-
-    let keys = Object.keys(tuple);
-    let values = '';
-
-    keys.forEach(function (key, index) {
-        this.query += `${snakeCase(key)}`;
-        let value = tuple[key];
+Model.create = async function (tuple) {
+    let keys = Object.keys(tuple).map(key => snakeCase(key)).join(', ');
+    let values = Object.values(tuple).map(function (value) {
         if (typeof value === 'string') {
-            values += `'${value}'`
+            return `'${value}'`;
         } else {
-            values +=`${value}`
+            return value
         }
+    }).join(', ');
 
-        if (index !== keys.length - 1) {
-            this.query += ', ';
-            values += ', '
-        }
-    }, this);
-    
-    this.query += `) VALUES (${values}) RETURNING *`;
+    this.query = `INSERT INTO ${snakeCase(this.name)}s (${keys}) VALUES (${values}) RETURNING *`;
 
-    var hydrate = this.hydrate.bind(this);
+    try {
+        var result = await pool.query(this.query);
+    } catch (err) {
+        throw err;
+    }
 
-    const q = this.promise(this.query, hydrate);
-
-    q.then(success).catch(error);
+    return this.hydrate(result.rows)[0];
 }
 
 
 /**
+ ************************* DEPRECATED ***********************************
  * promise() is used to build the generic promise wrapper for database queries
  * 
  * @param {string} query     | required
