@@ -1,10 +1,6 @@
 /********************************************************/
 // Package Imports
 var router = require('express').Router();
-var curry = require('curry');
-
-// Util Imports
-var handler = require('../util/errors/handler');
 
 // Model Imports
 var Department = require('../models/department');
@@ -12,44 +8,41 @@ var Department = require('../models/department');
 
 
 /* Get Departments */
-router.get('/', function (req, res, next) {
-    
-    var success = function (departments) {
-        console.log(departments);
-        res.render('index', { title: 'Departments', results: departments });
+router.get('/', async function (req, res, next) {
+
+    try {
+        var departments = await Department.get();
+    } catch (err) {
+        return next(err);
     }
 
-    var error = curry(handler)(next);
-
-    Department.get( success, error );
+    res.render('index', { title: 'Departments', results: departments });
 });
 
 /* Store New Department */
-router.post('/', function (req, res, next) {
+router.post('/', async function (req, res, next) {
     const department = req.body;
 
-    const success = function (result) {
-        console.log(result);
-        res.json(result);
+    try {
+        var newDepartment = await Department.create(department);
+    } catch (err) {
+        return next(err);
     }
 
-    var error = curry(handler)(next);
-
-    Department.create(department, success, error);
+    res.json(newDepartment);
 });
 
 /* Show Department With Id */
-router.get('/:id', function (req, res, next) {
+router.get('/:id', async function (req, res, next) {
   var id = req.params.id;
 
-  const success = function (department) {
-      console.log(department);
-      res.render('index', { title: `Department with id = ${id}`, results: department });
+  try {
+    var department = await Department.where('id', id).limit(1).first();
+  } catch (err) {
+      return next(err);
   }
 
-  var error = curry(handler)(next);
-
-  Department.where('id', id).limit(1).get(success, error);
+  res.render('index', { title: `Department with id = ${id}`, results: [department] });
 });
 
 
