@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+    div.main.container
+        div.row.align-items-center.justify-content-center
+            div.col-6
+                h2 Login
+                form(method='POST', action='/auth/login')
+                    div.form-group
+                        label(for='email') Email
+                        input#email.form-control(type='email', name='email', placeholder='yourname@email.com')
+                    div.form-group
+                        label(for='password') Password
+                        input#password.form-control(type='password', name='password')
+                    div.form-group
+                        button.btn.btn-primary(type='submit') Login
