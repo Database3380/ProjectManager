@@ -4,14 +4,22 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
+// Middleware
+var authenticated = require('./middleware/authenticated');
+
+// Routes
 var index = require('./routes/index');
+var auth = require('./routes/auth');
 var users = require('./routes/users');
 var departments = require('./routes/departments');
 var tasks = require('./routes/tasks');
 var projects = require('./routes/projects');
 var timeBlocks  = require('./routes/time-blocks');
 
+
+// App Initialization
 var app = express();
 
 // view engine setup
@@ -26,7 +34,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: 'Hydrogen5to10!',
+  name: 'db-proj-sessionId',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(authenticated);
+
 app.use('/', index);
+app.use('/auth', auth);
 app.use('/users', users);
 app.use('/departments', departments);
 app.use('/tasks', tasks);

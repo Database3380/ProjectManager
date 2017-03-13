@@ -7,8 +7,12 @@ var hash = require('../util/functions/hash');
 
 // Model Imports
 var User = require('../models/user');
+
+// Middlware Imports
+var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
+router.use(authOnly);
 
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
