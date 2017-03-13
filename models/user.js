@@ -25,12 +25,12 @@ User.prototype.constructor = User;
 Object.assign(User, Model);
 
 
-User.prototype.projects = function (success, error) {
-    return this.hasMany(Project, success, error);
+User.prototype.projects = function () {
+    return this.hasMany(Project);
 }
 
-User.prototype.department = function (success, error) {
-    return this.belongsTo(Department, success, error);
+User.prototype.department = function () {
+    return this.belongsTo(Department);
 }
 
 module.exports = User;
