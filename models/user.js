@@ -6,31 +6,41 @@ var hash = require('../util/functions/hash');
 var Model = require('./model');
 var Project = require('./project');
 var Department = require('./department');
+var Task = require('./task');
+var TimeBlock = require('./time-block');
 /********************************************************/
 
+class User extends Model {
+    constructor(user) {
+        super();
+        this.id = user.id;
+        this.name = user.name;
+        this.email = user.email;
+        this.payRate = user.pay_rate;
+        this.admin = user.admin;
+        this.departmentId = user.department_id;
+    }
 
-var User = function (user) {
-    this.id = user.id;
-    this.name = user.name;
-    this.email = user.email;
-    this.payRate = user.pay_rate;
-    this.admin = user.admin;
-    this.departmentId = user.department_id;
+    department() {
+        return this.belongsTo(Department);
+    }
+
+    manages() {
+        return this.hasOne(Department);
+    }
+
+    projects() {
+        return this.hasMany(Project);
+    }
+
+    tasks() {
+        return this.hasMany(Task);
+    }
+
+    worked() {
+        return this.hasMany(TimeBlock);
+    }
 }
 
-User.prototype = new Model;
-
-User.prototype.constructor = User;
-
-Object.assign(User, Model);
-
-
-User.prototype.projects = function () {
-    return this.hasMany(Project);
-}
-
-User.prototype.department = function () {
-    return this.belongsTo(Department);
-}
 
 module.exports = User;

@@ -1,22 +1,29 @@
 /********************************************************/
 // Model Imports
 var Model = require('./model');
+var User = require('./user');
+var Project = require('./project');
 /********************************************************/
 
+class Department extends Model {
+    constructor(department) {
+        super();
+        this.id = department.id;
+        this.name = department.name;
+        this.userId = department.user_id;
+    }
 
-var Department = function(department) {
-    this.id = department.id;
-    this.name = department.name;
-    this.userId = department.user_id;
+    employees() {
+        return this.hasMany(User);
+    }
+
+    manager() {
+        return this.belongsTo(User);
+    }
+
+    projects() {
+        return this.hasMany(Project);
+    }
 }
-
-// Get prototype methods from Model
-Department.prototype = new Model;
-
-//Set constructor for reference in Model functions
-Department.prototype.constructor = Department;
-
-// Get static methods from Model
-Object.assign(Department, Model);
 
 module.exports = Department;
