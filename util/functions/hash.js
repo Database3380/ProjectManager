@@ -1,10 +1,9 @@
 var bcrypt = require('bcrypt');
 
-function hash(password) {
+async function hash(password) {
   var saltRounds = 10;
-  var salt = bcrypt.genSaltSync(saltRounds);
-  
-  return bcrypt.hashSync(password, salt);
+  var salt = await bcrypt.genSalt(saltRounds);
+  return bcrypt.hash(password, salt);
 }
 
 module.exports = hash;

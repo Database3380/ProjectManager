@@ -1,10 +1,6 @@
 /********************************************************/
 // Package Imports
 var router = require('express').Router();
-var curry = require('curry');
-
-// Util Imports
-var handler = require('../util/errors/handler');
 
 // Model Imports
 var Task = require('../models/task');
@@ -12,41 +8,44 @@ var Task = require('../models/task');
 
 
 /* Get all Tasks */
-router.get('/', function (req, res, next) {
-    const success = function (tasks) {
-        res.render('index', { title: 'Tasks', results: tasks });
+router.get('/', async function (req, res, next) {
+
+    try {
+        var tasks = await Task.get();
+    } catch (err) {
+        return next(err);
     }
 
-    const error = curry(handler)(next);
-
-    Task.get(success, error);
+    res.render('index', { title: 'Tasks', results: tasks });
 });
 
 
 /* Store new Task */
-router.post('/', function (req, res, next) {
+router.post('/', async function (req, res, next) {
     let task = req.body;
 
-    const success = function (task) {
-        res.json(task)
+    try {
+        var newTask = Task.create(task);
+    } catch (err) {
+        return next(err);
     }
 
-    const error = curry(handler)(next);
-
-    Task.create(task, success, error);
+    res.json(newTask);
 });
 
 
 /* Get Task with Id */
-router.get('/:id', function (req, res, next) {
+router.get('/:id', async function (req, res, next) {
     let id = req.params.id;
 
-    const success = function (task) {
-        res.render('index', { title: `Task with id = ${id}`, results: task });
+    try {
+        var task = await Task.where('id', id).limit(1).first();
+    } catch (err) {
+        return next(err);
     }
 
-    const error = curry(handler)(next);
+    res.render('index', { title: `Task with id = ${id}`, results: task });
+})
 
-    Task.where('id', id).limit(1).get(success, error);
-});
+
 module.exports = router;

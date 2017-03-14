@@ -1,11 +1,9 @@
 /********************************************************/
 // Package Imports
 var router = require('express').Router();
-var curry = require('curry');
 
 // Util Imports
 var hash = require('../util/functions/hash');
-var handler = require('../util/errors/handler');
 
 // Model Imports
 var User = require('../models/user');
@@ -13,68 +11,60 @@ var User = require('../models/user');
 
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  const success = function (users) {
-    res.render('index', { title: 'Users', results: users });
-  }
-  
-  const error = curry(handler)(next);
+router.get('/', async function(req, res, next) {
 
-  User.get(success, error);
+    try {
+      var users = await User.get();
+    } catch (err) {
+      return next(err);
+    }
+
+    res.render('index', { title: 'Users', results: users });
 });
 
 
 /* Store new User */
-router.post('/', function (req, res, next) {
+router.post('/', async function (req, res, next) {
   const user = req.body;
-  user.password = hash(user.password);
 
-  const success = function (user) {
-    console.log(user);
-    res.json(user);
+  try {
+    user.password = await hash(user.password);
+    var newUser = await User.create(user);
+  } catch (err) {
+    return next(err);
   }
 
-  const error = curry(handler)(next);
-
-  User.create(user, success, error);
+  res.json(newUser);
 });
 
 
 /* Get all projects for user with :id */
-router.get('/:id/projects', function (req, res, next) {
+router.get('/:id/projects', async function (req, res, next) {
   let id = req.params.id;
 
-  const error = curry(handler)(next);
-
-  const userFetched = function (users) {
-    let user = users[0];
-    const success = function (projects) {
-      res.render('index', { title: `Projects for ${user.name}`, results: projects });
-    }
-
-    user.projects(success, error);
+  try {
+    var user = await User.where('id', id).limit(1).first();
+    var projects = await user.projects().get();
+  } catch (err) {
+    return next(err);
   }
 
-  User.where('id', id).limit(1).get(userFetched, error);
+  res.render('index', { title: `Projects for ${user.name}`, results: projects });
 });
 
 
 /* Get department that user with :id works in */
-router.get('/:id/department', function (req, res, next) {
+router.get('/:id/department', async function (req, res, next) {
   let id = req.params.id;
 
-  const error = curry(handler)(next);
-
-  const userFetched = function (users) {
-    let user = users[0];
-    const success = function (department) {
-      res.render('index', { title: `Department that ${user.name} works in.`, results: department });
-    }
-
-    user.department(success, error);
+  try {
+    var user = await User.where('id', id).limit(1).first();
+    var department = await user.department().first();
+  } catch (err) {
+    return next(err);
   }
 
-  User.where('id', id).limit(1).get(userFetched, error);
+  res.render('index', { title: `Department that ${user.name} works in.`, results: [department] });
 });
 
 
