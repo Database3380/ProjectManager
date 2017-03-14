@@ -7,6 +7,7 @@ var pool = new pg.Pool();
 // Util Imports
 var operators = require('../util/constants/operators');
 var snakeCase = require('../util/functions/snake-case');
+var singular = require('../util/functions/singular');
 /********************************************************/
 
 
@@ -28,7 +29,7 @@ class Model {
     }
 
     /***************************
-     * Dynamic Model Methods
+     * Dynamic Methods
      ***************************/
 
     hasOne(model) {
@@ -130,6 +131,25 @@ class Model {
 
 
     /**
+     * with() adds models to the static property withModels
+     * can be called at any point in the query string before executing (ex. get(), first())
+     * 
+     * Pass in the name of the function defining the relationship
+     * EX. if User has a function named department() that defines a belongsTo relationship to 
+     *     Department class then you would use the argument 'department' in the with function.
+     * 
+     *     User.where('id', 1).with('department').first();=
+     * @param {...string} models | required
+     * 
+     * @return {object} 
+     */
+    static with(...models) {
+        this.withModels = models;
+        return this;
+    }
+
+
+    /**
      * get() is the execution function for the query
      * must be called at the end of every query build
      * will automatically add the select * clause to query if not already added 
@@ -149,10 +169,21 @@ class Model {
 
         this.query = '';
 
-        return instance ? this.hydrate(result.rows)[0] : this.hydrate(result.rows);
+        var results = this.hydrate(result.rows);
+
+        if (this.withModels.length > 0) {
+            results = await this.fetchWith(results);
+        }
+
+        return instance ? results[0] : results;
     }
 
-
+    /**
+     * first() executes the get() function with the instance argument set as true
+     * this causes get() to return a single instance from the query not an array of results
+     * 
+     * @return {function}
+     */
     static first() {
         return this.get(true);
     }
@@ -189,11 +220,31 @@ class Model {
         return this.hydrate(result.rows)[0];
     }
 
+    /**
+     * fetchWith() attaches the models in withModels to each result
+     * the relevant models will be attached to each result in a object set as the 
+     * with property. (ex. result.with = { department: {}, projects: [] })
+     * 
+     * @param {array} results | required
+     * 
+     * @return {Promise} returns a parallel promise object
+     */
+    static fetchWith(results) {
+        return Promise.all(results.map(async function (result) {
+            result.with = {};
+            for (let model of this.withModels) {
+
+                result.with[model] = singular(model) ? await result[model]().first() : await result[model]().get();
+            }
+            return result;
+        }, this))
+    } 
+
 
     /**
      * hydrate() is used to query results into named and functional objects of the correct type
      * 
-     * @param {array} objects
+     * @param {array} objects | required
      */
     static hydrate(objects) {
         return objects.map(function (object) {
@@ -209,6 +260,8 @@ class Model {
  */
 Model.query = '';
 
+
+Model.withModels = [];
 
 
 module.exports = Model;
