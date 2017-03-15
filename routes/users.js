@@ -7,8 +7,12 @@ var hash = require('../util/functions/hash');
 
 // Model Imports
 var User = require('../models/user');
+
+// Middlware Imports
+var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
+router.use(authOnly);
 
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
@@ -19,7 +23,7 @@ router.get('/', async function(req, res, next) {
       return next(err);
     }
 
-    res.render('index', { title: 'Users', results: users });
+    res.render('index', { title: 'Users', results: users, auth: req.auth });
 });
 
 
@@ -49,7 +53,7 @@ router.get('/:id/projects', async function (req, res, next) {
     return next(err);
   }
 
-  res.render('index', { title: `Projects for ${user.name}`, results: projects });
+  res.render('index', { title: `Projects for ${user.name}`, results: projects, auth: req.auth });
 });
 
 
@@ -64,8 +68,9 @@ router.get('/:id/department', async function (req, res, next) {
     return next(err);
   }
 
-  res.render('index', { title: `Department that ${user.name} works in.`, results: [department] });
+  res.render('index', { title: `Department that ${user.name} works in.`, results: [department], auth: req.auth });
 });
+
 
 
 module.exports = router;

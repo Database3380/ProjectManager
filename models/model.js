@@ -1,6 +1,5 @@
 /********************************************************/
 // Package Imports
-var Promise = require('promise');
 var pg = require('pg');
 var pool = new pg.Pool();
 
@@ -44,6 +43,9 @@ class Model {
         return model.where('id', this[`${model.name.toLowerCase()}Id`]).limit(1);
     }
 
+    property(property) {
+        return this.constructor.select(property).where('id', this.id).first(true);
+    }
 
     /*************************
      * Static Methods
@@ -59,7 +61,7 @@ class Model {
      * 
      * @return {object}
      */
-    static select(fields) {
+    static select(...fields) {
         this.query = 'SELECT ';
 
         if (!fields || fields.length == 0) {
@@ -99,12 +101,14 @@ class Model {
         this.query += ` WHERE ${column} `;
 
         if (operators.includes(operator)) {
-            this.query += `${operator} ${value}`;
+            this.query += `${operator} `;
         } else {
             value = operator;
-            this.query += `= ${value}`;
+            this.query += `= `;
         }
 
+        this.query += (typeof value === 'string') ? `'${value}'` : value;
+        
         return this;
     }
 
@@ -156,7 +160,7 @@ class Model {
      * 
      * @return {array} hydrated results, typeof calling model
      */
-    static async get(instance = false) {
+    static async get(raw = false, instance = false) {
         if (!this.query.includes('SELECT')) {
             this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
         }
@@ -169,13 +173,17 @@ class Model {
 
         this.query = '';
 
-        var results = this.hydrate(result.rows);
+        if (raw) {
+            return instance ? result.rows[0] : result.rows;
+        } else {
+            var results = this.hydrate(result.rows);
 
-        if (this.withModels.length > 0) {
-            results = await this.fetchWith(results);
+            if (this.withModels.length > 0) {
+                results = await this.fetchWith(results);
+            }
+
+            return instance ? results[0] : results;
         }
-
-        return instance ? results[0] : results;
     }
 
     /**
@@ -184,8 +192,8 @@ class Model {
      * 
      * @return {function}
      */
-    static first() {
-        return this.get(true);
+    static first(raw = false) {
+        return this.get(raw, true);
     }
 
 

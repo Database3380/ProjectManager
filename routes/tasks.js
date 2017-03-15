@@ -4,7 +4,12 @@ var router = require('express').Router();
 
 // Model Imports
 var Task = require('../models/task');
+
+// Middlware Imports
+var authOnly = require('../middleware/auth-only');
 /********************************************************/
+
+router.use(authOnly);
 
 
 /* Get all Tasks */
@@ -16,7 +21,7 @@ router.get('/', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: 'Tasks', results: tasks });
+    res.render('index', { title: 'Tasks', results: tasks, auth: req.auth });
 });
 
 
@@ -44,7 +49,7 @@ router.get('/:id', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: `Task with id = ${id}`, results: task });
+    res.render('index', { title: `Task with id = ${id}`, results: task, auth: req.auth });
 })
 
 

@@ -4,8 +4,12 @@ var router = require('express').Router();
 
 // Model Imports
 var Department = require('../models/department');
+
+// Middlware Imports
+var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
+router.use(authOnly);
 
 /* Get Departments */
 router.get('/', async function (req, res, next) {
@@ -16,7 +20,7 @@ router.get('/', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: 'Departments', results: departments });
+    res.render('index', { title: 'Departments', results: departments, auth: req.auth });
 });
 
 /* Store New Department */
@@ -42,7 +46,7 @@ router.get('/:id', async function (req, res, next) {
       return next(err);
   }
 
-  res.render('index', { title: `Department with id = ${id}`, results: [department] });
+  res.render('index', { title: `Department with id = ${id}`, results: [department], auth: req.auth });
 });
 
 
