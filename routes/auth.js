@@ -14,38 +14,33 @@ var User = require('../models/user');
 
 router.get('/login', function (req, res, next) {
     res.render('auth/login', { title: 'Login | Db-Proj'});
-});
+}); 
 
-router.post('/login', function (req, res, next) {
+router.post('/login', async function (req, res, next) {
     var credentials = req.body;
 
-    const error = curry(handler)(next);
-
-    const userFetched = function (users) {
-        let user = users[0];
-        const hashFetched = function (hashes) {
-            let hash = hashes[0].password;
-
-            const hashCompared = function (result) {
-                if (result) {
-                    req.session.user = user;
-                    res.redirect('/');
-                } else {
-                    res.redirect('/');
-                }
-            }
-            compare(credentials.password, hash).then(hashCompared).catch(error);
-        }
-        user.getHash(hashFetched, error);
+    try {
+        var user = await User.where('email', credentials.email).limit(1).first();
+        let hash = await user.hash();
+        var result = await compare(credentials.password, hash);
+    } catch (err) {
+        return next(err);
     }
-    
-    User.where('email', credentials.email).limit(1).get(userFetched, error);
+
+    if (result) {
+        req.session.user = user;
+
+        req.session.save(function (err) {
+            if (err) return next(err);
+            res.redirect('/');
+        });
+    } else {
+        res.redirect('/');
+    }
 });
 
 router.post('/logout', function (req, res, next) {
-    console.log(req.session);
     const logout = function (err) {
-        console.log(req.session);
         if (err) return next(new Error([err]));
 
         res.redirect('/');

@@ -4,8 +4,11 @@ var router = require('express').Router();
 
 // Model Imports
 var Project = require('../models/project');
+// Middlware Imports
+var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
+router.use(authOnly);
 
 /* Get all projects */
 router.get('/', async function (req, res, next) {
@@ -16,7 +19,7 @@ router.get('/', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: 'Projects', results: projects });
+    res.render('index', { title: 'Projects', results: projects, auth: req.auth });
 });
 
 
@@ -44,7 +47,7 @@ router.get('/:id', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: `Project with id = ${id}`, results: project });
+    res.render('index', { title: `Project with id = ${id}`, results: project, auth: req.auth });
 })
 
 
