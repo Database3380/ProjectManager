@@ -40,6 +40,11 @@ class User extends Model {
     worked() {
         return this.hasMany(TimeBlock);
     }
+
+    async hash() {
+        let object = await this.property('password');
+        return object.password;
+    }
 }
 
 
