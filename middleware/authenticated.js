@@ -1,12 +1,7 @@
+var util = require('util');
+
 var check = function (req, res, next) {
-    console.log(req.session);
-    if (req.session.user) {
-        req.auth = true;
-    } else {
-        req.auth = false;
-    }
-
-
+    req.auth = Boolean(req.session.user);
     next();
 }
 
