@@ -11,6 +11,8 @@ var authOnly = require('../middleware/auth-only');
 
 router.use(authOnly);
 
+// This is a test comment. Henry Chau
+
 /* Get Departments */
 router.get('/', async function (req, res, next) {
 
