@@ -11,5 +11,9 @@ router.get('/', function(req, res, next) {
 });
 
 
+router.get('/app', function(req, res, next) {
+  res.render('index', { title: 'Homepage', results: [], auth: req.auth, app: true });
+});
+
 
 module.exports = router;

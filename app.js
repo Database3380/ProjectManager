@@ -43,6 +43,8 @@ app.use(session({
 
 app.use(authenticated);
 
+app.use(express.static(path.join(__dirname + '/public')));
+
 app.use('/', index);
 app.use('/auth', auth);
 app.use('/users', users);
