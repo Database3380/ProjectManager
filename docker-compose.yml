@@ -17,6 +17,7 @@ services:
     volumes:
       - .:/home/app/dbproject
       - /home/app/dbproject/node_modules
+      - /home/app/dbproject/front-end
   db:
     build:
       context: .

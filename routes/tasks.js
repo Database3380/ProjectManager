@@ -4,13 +4,20 @@ var router = require('express').Router();
 
 // Model Imports
 var Task = require('../models/task');
+<<<<<<< HEAD
 var User = require('../models/user');
+=======
+>>>>>>> set_up_base_for_react_front_end
 
 // Middlware Imports
 var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
+<<<<<<< HEAD
 // router.use(authOnly);
+=======
+router.use(authOnly);
+>>>>>>> set_up_base_for_react_front_end
 
 
 /* Get all Tasks */

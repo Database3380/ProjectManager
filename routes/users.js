@@ -9,11 +9,13 @@ var hash = require('../util/functions/hash');
 var User = require('../models/user');
 var Department = require('../models/department');
 
+
 // Middlware Imports
 var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
 // router.use(authOnly);
+
 
 /* GET users listing. */
 router.get('/', async function(req, res, next) {

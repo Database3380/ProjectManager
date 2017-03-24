@@ -9,7 +9,7 @@ RUN chown -R app:app $HOME/*
 
 USER app
 WORKDIR $HOME/dbproject
-RUN npm install
+RUN npm install --only=production
 
 USER root
 COPY . $HOME/dbproject

@@ -21,6 +21,10 @@ var dashboard = require('./routes/dashboard');
 
 var admin = require('./routes/admin');
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> set_up_base_for_react_front_end
 // App Initialization
 var app = express();
 
@@ -44,6 +48,8 @@ app.use(session({
 }));
 
 app.use(authenticated);
+
+app.use(express.static(path.join(__dirname + '/public')));
 
 app.use('/', index);
 app.use('/auth', auth);
