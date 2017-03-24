@@ -4,7 +4,13 @@ var router = require('express').Router();
 
 // Model Imports
 var Task = require('../models/task');
+var User = require('../models/user');
+
+// Middlware Imports
+var authOnly = require('../middleware/auth-only');
 /********************************************************/
+
+// router.use(authOnly);
 
 
 /* Get all Tasks */
@@ -16,7 +22,7 @@ router.get('/', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: 'Tasks', results: tasks });
+    res.render('index', { title: 'Tasks', results: tasks, auth: req.auth });
 });
 
 
@@ -25,7 +31,7 @@ router.post('/', async function (req, res, next) {
     let task = req.body;
 
     try {
-        var newTask = Task.create(task);
+        var newTask = await Task.create(task);
     } catch (err) {
         return next(err);
     }
@@ -36,16 +42,17 @@ router.post('/', async function (req, res, next) {
 
 /* Get Task with Id */
 router.get('/:id', async function (req, res, next) {
-    let id = req.params.id;
+    var user = new User(req.session.user);
+    var taskId = req.params.id;
 
     try {
-        var task = await Task.where('id', id).limit(1).first();
+        var task = await user.tasks().where('id', taskId).first();
     } catch (err) {
         return next(err);
     }
 
-    res.render('index', { title: `Task with id = ${id}`, results: task });
-})
+    res.render('task', { title: `Task Id: ${taskId}`, auth: Boolean(user), task: task });
+});
 
 
 module.exports = router;

@@ -4,7 +4,12 @@ var router = require('express').Router();
 
 // Model Imports
 var TimeBlock = require('../models/time-block');
+
+// Middlware Imports
+var authOnly = require('../middleware/auth-only');
 /********************************************************/
+
+router.use(authOnly);
 
 
 /* Get all Time Blocks */
@@ -16,7 +21,7 @@ router.get('/', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: 'Time Blocks', results: timeBlocks });
+    res.render('index', { title: 'Time Blocks', results: timeBlocks, auth: req.auth });
 });
 
 

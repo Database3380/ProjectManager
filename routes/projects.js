@@ -4,8 +4,11 @@ var router = require('express').Router();
 
 // Model Imports
 var Project = require('../models/project');
+// Middlware Imports
+var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
+// router.use(authOnly);
 
 /* Get all projects */
 router.get('/', async function (req, res, next) {
@@ -16,16 +19,16 @@ router.get('/', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: 'Projects', results: projects });
+    res.render('index', { title: 'Projects', results: projects, auth: req.auth });
 });
 
 
 /* Store new project */
 router.post('/', async function (req, res, next) {
-    let project = req.body;
+    var project = req.body;
 
     try {
-        var newProject = Project.create(project);
+        var newProject = await Project.create(project);
     } catch (err) {
         return next(err);
     }
@@ -33,6 +36,9 @@ router.post('/', async function (req, res, next) {
     res.json(newProject);
 });
 
+router.get('/create', async function (req, res, next) {
+    res.render('creation/project', { title: 'New Project', auth: Boolean(req.session.user) });
+});
 
 /* Get project with id */
 router.get('/:id', async function (req, res, next) {
@@ -44,7 +50,7 @@ router.get('/:id', async function (req, res, next) {
         return next(err);
     }
 
-    res.render('index', { title: `Project with id = ${id}`, results: project });
+    res.render('index', { title: `Project with id = ${id}`, results: project, auth: req.auth });
 })
 
 
