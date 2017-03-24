@@ -1,6 +1,5 @@
 /********************************************************/
 // Package Imports
-var Promise = require('promise');
 var pg = require('pg');
 var pool = new pg.Pool();
 
@@ -8,6 +7,7 @@ var pool = new pg.Pool();
 var operators = require('../util/constants/operators');
 var snakeCase = require('../util/functions/snake-case');
 var singular = require('../util/functions/singular');
+var timestamp = require('../util/functions/timestamp');
 /********************************************************/
 
 
@@ -26,6 +26,7 @@ class Model {
 
     constructor() {
         this.query = '';
+        this.withModels = [];
     }
 
     /***************************
@@ -33,6 +34,7 @@ class Model {
      ***************************/
 
     hasOne(model) {
+        // `SELECT * FROM ${model}s WHERE ${snakeCase(this.constructor.name)}_id = ${this.id}`
         return model.where(`${this.constructor.name.toLowerCase()}_id`, this.id).limit(1);
     }
 
@@ -44,6 +46,9 @@ class Model {
         return model.where('id', this[`${model.name.toLowerCase()}Id`]).limit(1);
     }
 
+    property(property) {
+        return this.constructor.select(property).where('id', this.id).first(true);
+    }
 
     /*************************
      * Static Methods
@@ -59,7 +64,7 @@ class Model {
      * 
      * @return {object}
      */
-    static select(fields) {
+    select(...fields) {
         this.query = 'SELECT ';
 
         if (!fields || fields.length == 0) {
@@ -74,9 +79,14 @@ class Model {
             }, this);
         }
 
-        this.query += `FROM ${snakeCase(this.name)}s`;
+        this.query += `FROM ${snakeCase(this.constructor.name)}s`;
 
         return this;
+    }
+
+    static select(...fields) {
+        let instance = this.getInstance();
+        return instance.select(...fields);
     }
 
     /**
@@ -91,23 +101,33 @@ class Model {
      * 
      * @return {object}
      */
-    static where(column, operator, value) {
+    where(column, operator, value) {
         if (!this.query.includes('SELECT')) {
-            this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
+            this.query = `SELECT * FROM ${snakeCase(this.constructor.name)}s`;
         }
 
-        this.query += ` WHERE ${column} `;
+        if (this.query.includes('WHERE')) {
+            this.query += ` AND ${column} `;
+        } else {
+            this.query += ` WHERE ${column} `;
+        }
 
         if (operators.includes(operator)) {
-            this.query += `${operator} ${value}`;
+            this.query += `${operator} `;
         } else {
             value = operator;
-            this.query += `= ${value}`;
+            this.query += `= `;
         }
 
+        this.query += (typeof value === 'string') ? `'${value}'` : value;
+        
         return this;
     }
 
+    static where(column, operator, value) {
+        let instance = this.getInstance();
+        return instance.where(column, operator, value);
+    }
 
     /**
      * limit() adds the limit clause to the query string
@@ -119,14 +139,19 @@ class Model {
      * 
      * @return {object}
      */
-    static limit(limit) {
+    limit(limit) {
         if (!this.query.includes('SELECT')) {
-            this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
+            this.query = `SELECT * FROM ${snakeCase(this.constructor.name)}s`;
         }
 
         this.query += ` LIMIT ${limit}`;
 
         return this;
+    }
+
+    static limit(limit) {
+        let instance = this.getInstance();
+        return instance.limit(limit);
     }
 
 
@@ -143,9 +168,14 @@ class Model {
      * 
      * @return {object} 
      */
-    static with(...models) {
+    with(...models) {
         this.withModels = models;
         return this;
+    }
+
+    static with(...models) {
+        let instance = this.getInstance();
+        return instance.with(...models);
     }
 
 
@@ -156,9 +186,9 @@ class Model {
      * 
      * @return {array} hydrated results, typeof calling model
      */
-    static async get(instance = false) {
+    async get(raw = false, instance = false) {
         if (!this.query.includes('SELECT')) {
-            this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
+            this.query = `SELECT * FROM ${snakeCase(this.constructor.name)}s`;
         }
         
         try {
@@ -169,13 +199,22 @@ class Model {
 
         this.query = '';
 
-        var results = this.hydrate(result.rows);
+        if (raw) {
+            return instance ? result.rows[0] : result.rows;
+        } else {
+            var results = this.hydrate(result.rows);
 
-        if (this.withModels.length > 0) {
-            results = await this.fetchWith(results);
+            if (this.withModels.length > 0) {
+                results = await this.fetchWith(results);
+            }
+
+            return instance ? results[0] : results;
         }
+    }
 
-        return instance ? results[0] : results;
+    static async get(raw = false, instance = false) {
+        let _instance = this.getInstance();
+        return _instance.get(raw, instance);
     }
 
     /**
@@ -184,8 +223,12 @@ class Model {
      * 
      * @return {function}
      */
-    static first() {
-        return this.get(true);
+    first(raw = false) {
+        return this.get(raw, true);
+    }
+
+    static first(raw = false) {
+        return this.get(raw, true);
     }
 
 
@@ -197,17 +240,18 @@ class Model {
      * 
      * @return {object} single hydrated model from tuple, typeof calling model
      */
-    static async create(tuple) {
-        let keys = Object.keys(tuple).map(key => snakeCase(key)).join(', ');
+    async create(tuple) {
+        var stamp = timestamp();
+        let keys = Object.keys(tuple).map(key => snakeCase(key)).concat(['created_at', 'updated_at']).join(', ');
         let values = Object.values(tuple).map(function (value) {
             if (typeof value === 'string') {
                 return `'${value}'`;
             } else {
                 return value
             }
-        }).join(', ');
+        }).concat([`'${stamp}'`, `'${stamp}'`]).join(', ');
 
-        this.query = `INSERT INTO ${snakeCase(this.name)}s (${keys}) VALUES (${values}) RETURNING *`;
+        this.query = `INSERT INTO ${snakeCase(this.constructor.name)}s (${keys}) VALUES (${values}) RETURNING *`;
 
         try {
             var result = await pool.query(this.query);
@@ -220,6 +264,10 @@ class Model {
         return this.hydrate(result.rows)[0];
     }
 
+    static create(tuple) {
+        var instance = this.getInstance();
+        return instance.create(tuple);
+    }
     /**
      * fetchWith() attaches the models in withModels to each result
      * the relevant models will be attached to each result in a object set as the 
@@ -229,7 +277,7 @@ class Model {
      * 
      * @return {Promise} returns a parallel promise object
      */
-    static fetchWith(results) {
+    fetchWith(results) {
         return Promise.all(results.map(async function (result) {
             result.with = {};
             for (let model of this.withModels) {
@@ -246,22 +294,17 @@ class Model {
      * 
      * @param {array} objects | required
      */
-    static hydrate(objects) {
+    hydrate(objects) {
         return objects.map(function (object) {
-            return new this(object);
+            return new this.constructor(object);
         }, this);
+    }
+
+    static getInstance() {
+        return new this();
     }
 }
 
-
-/**
- * Initialize static query property
- * used in the static functions when building queries
- */
-Model.query = '';
-
-
-Model.withModels = [];
 
 
 module.exports = Model;

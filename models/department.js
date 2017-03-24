@@ -1,16 +1,17 @@
 /********************************************************/
 // Model Imports
 var Model = require('./model');
-var User = require('./user');
-var Project = require('./project');
+
 /********************************************************/
 
 class Department extends Model {
     constructor(department) {
         super();
-        this.id = department.id;
-        this.name = department.name;
-        this.userId = department.user_id;
+        if (department) {
+            this.id = department.id;
+            this.name = department.name;
+            this.userId = department.user_id;
+        }
     }
 
     employees() {
@@ -26,4 +27,10 @@ class Department extends Model {
     }
 }
 
+
+
 module.exports = Department;
+
+
+var User = require('./user');
+var Project = require('./project');

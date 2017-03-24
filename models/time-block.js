@@ -1,9 +1,7 @@
 /********************************************************/
 // Model Imports
 var Model = require('./model');
-var Project = require('./project');
-var Task = require('./task');
-var User = require('./user');
+
 /********************************************************/
 
 
@@ -35,3 +33,8 @@ class TimeBlock extends Model {
 
 
 module.exports = TimeBlock;
+
+
+var Project = require('./project');
+var Task = require('./task');
+var User = require('./user');

@@ -1,32 +1,33 @@
 /********************************************************/
 // Model Imports
 var Model = require('./model');
-var Project = require('./project');
-var TimeBlock = require('./time-block');
-var User = require('./user');
+
 /********************************************************/
 
-
 class Task extends Model {
-    constructor() {
+    constructor(task) {
         super();
-        this.id = task.id;
-        this.name = task.name;
-        this.description = task.description;
-        this.dueDate = task.due_date;
-        this.userId = task.user_id;
-        this.projectId = task.project_id;      
+        if (task) {
+            this.id = task.id;
+            this.name = task.name;
+            this.description = task.description;
+            this.dueDate = task.due_date;
+            this.completed = task.completed;
+            this.userId = task.user_id;
+            this.projectId = task.project_id;
+        }      
     }
 
     project() {
-        return this.belongsTo(Project);
+        // var Project = projectInstance();
+        return this.belongsTo(Project); 
     }
 
-    assignedTo() {
+    user() {
         return this.belongsTo(User);
     }
 
-    time() {
+    timeBlocks() {
         return this.hasMany(TimeBlock);
     }
 }
@@ -34,3 +35,7 @@ class Task extends Model {
 
 
 module.exports = Task;
+
+var Project = require('./project');
+var TimeBlock = require('./time-block');
+var User = require('./user');
