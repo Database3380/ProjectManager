@@ -48,7 +48,9 @@ SET default_with_oids = false;
 CREATE TABLE departments (
     id integer NOT NULL,
     name character varying NOT NULL,
-    user_id integer
+    user_id integer,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -86,7 +88,9 @@ CREATE TABLE projects (
     budget integer NOT NULL,
     due_date date NOT NULL,
     user_id integer NOT NULL,
-    department_id integer NOT NULL
+    department_id integer NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -122,8 +126,11 @@ CREATE TABLE tasks (
     name character varying NOT NULL,
     description text NOT NULL,
     due_date date NOT NULL,
+    completed boolean NOT NULL DEFAULT false, 
     user_id integer NOT NULL,
-    project_id integer NOT NULL
+    project_id integer NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -160,7 +167,9 @@ CREATE TABLE time_blocks (
     task_id integer NOT NULL,
     project_id integer NOT NULL,
     start_time timestamp with time zone NOT NULL,
-    end_time timestamp with time zone
+    end_time timestamp with time zone,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -198,7 +207,9 @@ CREATE TABLE users (
     password character varying NOT NULL,
     pay_rate real NOT NULL,
     admin boolean DEFAULT false NOT NULL,
-    department_id integer NOT NULL
+    department_id integer NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
