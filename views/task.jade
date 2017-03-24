@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    div.container
+        div.list-group
+            div.list-group-item.d-flex.w-100.justify-content-between
+                h3= task.name
+                small= new Date(task.dueDate).toDateString()
+            div.list-group-item
+                div!= task.description

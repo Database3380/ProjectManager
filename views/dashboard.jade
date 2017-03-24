@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    div.container 
+        div.list-group
+            each project in projects
+                div.list-group-item.list-group-item-info
+                    h3= project.name
+                each task in tasks
+                    if task.projectId == project.id
+                        a.list-group-item.list-group-item-action(href=`/tasks/${task.id}`)
+                                                
+                            div.d-flex.w-100.justify-content-between
+                 
+                                h5.mb-1= task.name
+
+                                small.text-muted= new Date(task.dueDate).toDateString()
+

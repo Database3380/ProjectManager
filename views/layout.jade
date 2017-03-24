@@ -1,7 +1,41 @@
 doctype html
+
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    include includes/head.jade
+    block head
   body
-    block content
+    div.container-fluid.d-flex
+      div.d-flex.flex-column
+        p
+          strong Sidebar
+      div.d-flex.flex-column.w-100
+        nav.navbar.navbar-toggleable-md.navbar-light.bg-faded
+          div.container
+            button.navbar-toggler.navbar-toggler-right(type='button', data-toggel='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle Navigation')
+              span.navbar-toggler-icon
+            if auth
+              a.navbar-brand(href='/dashboard') Project
+            else
+              a.navbar-brand(href='/') Project
+            div#navbarNav.collapse.navbar-collapse
+              ul.navbar-nav
+                li.nav-item
+                  a.nav-link(href='/users') Users
+                li.nav-item
+                  a.nav-link(href='/departments') Departments
+                li.nav-item
+                  a.nav-link(href='/projects') Projects
+                li.nav-item
+                  if auth
+                    form.form-inline.my-2.my-lg-0(method='POST', action='/auth/logout')
+                      button.nav-link(type='submit') Logout
+                  else
+                    a.nav-link(href='/auth/login') Login
+
+        
+        block content
+
+    include includes/foot.jade
+    block foot

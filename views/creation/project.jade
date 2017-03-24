@@ -1,0 +1,28 @@
+extends ../layout
+
+block head
+    script(src='//cloud.tinymce.com/stable/tinymce.min.js')
+
+
+block content
+    div.container.d-flex.align-items-center.justify-content-center
+        div.card.w-50
+            div.card-block
+                form#user-form(method='POST', action='/projects')
+                    div.form-group
+                        label(for='name') Name
+                        input#name.form-control(name='name', type='text')
+                    div.form-group
+                        label(for='dueDate') Due Date 
+                        input#dueDate.form-control(name='dueDate', type='date', value=new Date().toISOString().substr(0,10))
+                    div.form-group
+                        label(for='description') Description
+                        textarea#description.form-control(name='description')
+                    div.form-group
+                        button.btn.btn-primary(type='submit') Create
+
+block foot
+    script.
+        tinymce.init({
+            selector: 'textarea#description'
+        });

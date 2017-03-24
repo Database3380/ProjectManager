@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+    div.container.d-flex.align-items-center.justify-content-center
+        div.card.w-50
+            div.card-block
+                form#user-form(method='POST', action='/users')
+                    div.form-group
+                        label(for='name') Name
+                        input#name.form-control(name='name', type='text')
+                    div.form-group
+                        label(for='email') Email
+                        input#email.form-control(name='email', type='email')
+                    div.form-group
+                        label(for='password') password
+                        input#password.form-control(name='password', type='password')
+                    div.form-group
+                        label(for='pay-rate') Pay Rate (Dollars/Hour)
+                        input#pay-rate.form-control(name='payRate', type='number', minimum='1.00', step='0.01')
+                    div.form-group
+                        label(for='admin') Administrator
+                        select#admin.form-control(name='admin', value='true')
+                            option(value='true') True
+                            option(value='false') False
+                    div.form-group
+                        label(for='department') Department
+                        select#department.form-control(name='departmentId')
+                            for department in departments
+                                option(value=department.id)= department.name
+                    div.form-group
+                        button.btn.btn-primary(type='submit') Create
