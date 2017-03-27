@@ -119,7 +119,7 @@ class Model {
             this.query += `= `;
         }
 
-        this.query += (typeof value === 'string') ? `'${value}'` : value;
+        this.query += `$$${value}$$`;
         
         return this;
     }
@@ -244,15 +244,11 @@ class Model {
         var stamp = timestamp();
         let keys = Object.keys(tuple).map(key => snakeCase(key)).concat(['created_at', 'updated_at']).join(', ');
         let values = Object.values(tuple).map(function (value) {
-            if (typeof value === 'string') {
-                return `'${value}'`;
-            } else {
-                return value
-            }
-        }).concat([`'${stamp}'`, `'${stamp}'`]).join(', ');
+            return `$$${value}$$`;
+        }).concat([`$$${stamp}$$`, `$$${stamp}$$`]).join(', ');
 
         this.query = `INSERT INTO ${snakeCase(this.constructor.name)}s (${keys}) VALUES (${values}) RETURNING *`;
-
+        console.log(this.query)
         try {
             var result = await pool.query(this.query);
         } catch (err) {

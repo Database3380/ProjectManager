@@ -14,9 +14,9 @@ class User extends Model {
             this.id = user.id;
             this.name = user.name;
             this.email = user.email;
-            this.payRate = user.pay_rate;
+            this.payRate = user.pay_rate || user.payRate;
             this.admin = user.admin;
-            this.departmentId = user.department_id;
+            this.departmentId = user.department_id || user.departmentId;
         }
     }
 

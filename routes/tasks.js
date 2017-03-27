@@ -4,20 +4,15 @@ var router = require('express').Router();
 
 // Model Imports
 var Task = require('../models/task');
-<<<<<<< HEAD
 var User = require('../models/user');
-=======
->>>>>>> set_up_base_for_react_front_end
+var Project = require('../models/project');
 
 // Middlware Imports
 var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
-<<<<<<< HEAD
 // router.use(authOnly);
-=======
-router.use(authOnly);
->>>>>>> set_up_base_for_react_front_end
+
 
 
 /* Get all Tasks */
@@ -36,6 +31,7 @@ router.get('/', async function (req, res, next) {
 /* Store new Task */
 router.post('/', async function (req, res, next) {
     let task = req.body;
+    task.description.replace(/\r?\n|\r/, '');
 
     try {
         var newTask = await Task.create(task);
@@ -44,6 +40,34 @@ router.post('/', async function (req, res, next) {
     }
 
     res.json(newTask);
+});
+
+router.get('/create', async function (req, res, next) {
+    var user = new User(req.session.user);
+
+    try {
+        var projects = await Project.get();
+        var users = await User.get();
+    } catch (err) {
+        return next(err);
+    }
+
+    if (!user.admin) {
+        projects = projects.filter(function (project) {
+            return project.departmentId == user.departmentId;
+        });
+
+        users = users.filter(function (assignee) {
+            return assignee.departmentId == user.departmentId;
+        });
+    }
+
+    res.render('creation/task',{
+        title: 'New Task',
+        auth: Boolean(user),
+        projects: projects,
+        users: users
+    });
 });
 
 

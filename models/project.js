@@ -12,9 +12,9 @@ class Project extends Model {
             this.name = project.name;
             this.description = project.description;
             this.budget = project.budget
-            this.dueDate = project.due_date;
-            this.userId = project.user_id;
-            this.projectId = project.department_id; 
+            this.dueDate = project.due_date || project.dueDate;
+            this.userId = project.user_id || project.userId;
+            this.departmentId = project.department_id || project.departmentId; 
         }  
     }
 

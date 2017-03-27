@@ -10,7 +10,7 @@ class Department extends Model {
         if (department) {
             this.id = department.id;
             this.name = department.name;
-            this.userId = department.user_id;
+            this.userId = department.user_id || department.userId;
         }
     }
 

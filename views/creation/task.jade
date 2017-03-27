@@ -8,7 +8,7 @@ block content
     div.container.d-flex.align-items-center.justify-content-center
         div.card.w-50
             div.card-block
-                form#user-form(method='POST', action='/projects')
+                form#user-form(method='POST', action='/tasks')
                     div.form-group
                         label(for='name') Name
                         input#name.form-control(name='name', type='text')
@@ -19,19 +19,15 @@ block content
                         label(for='description') Description
                         textarea#description.form-control(name='description')
                     div.form-group
-                        label(for='budget') Budget
-                        input#budget.form-control(name='budget', type='number', min='1.00', step='.01')
-                    div.form-group
-                        label(for='manager') Project manager
-                        select#manager.form-control(name='userId')
-                            option(value='None', selected) No manager
+                        label(for='assigned') Assigned To
+                        select#assigned.form-control(name='userId')
                             for user in users
                                 option(value=user.id)= user.name
                     div.form-group
-                        label(for='department') Department
-                        select#department.form-control(name='departmentId')
-                            for department in departments
-                                option(value=department.id)= department.name
+                        label(for='project') Project
+                        select#project.form-control(name='projectId')
+                            for project in projects
+                                option(value=project.id)= project.name
                     div.form-group
                         button.btn.btn-primary(type='submit') Create
 

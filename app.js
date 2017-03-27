@@ -21,10 +21,6 @@ var dashboard = require('./routes/dashboard');
 
 var admin = require('./routes/admin');
 
-<<<<<<< HEAD
-=======
-
->>>>>>> set_up_base_for_react_front_end
 // App Initialization
 var app = express();
 

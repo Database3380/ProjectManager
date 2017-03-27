@@ -11,10 +11,10 @@ class Task extends Model {
             this.id = task.id;
             this.name = task.name;
             this.description = task.description;
-            this.dueDate = task.due_date;
-            this.completed = task.completed;
-            this.userId = task.user_id;
-            this.projectId = task.project_id;
+            this.dueDate = task.due_date || task.dueDate;
+            this.completed = task.completed || false;
+            this.userId = task.user_id || task.userId;
+            this.projectId = task.project_id || task.projectId;
         }      
     }
 
