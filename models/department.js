@@ -8,12 +8,13 @@ var Project = require('./project');
 class Department extends Model {
     constructor(department) {
         super();
-        this.id = department.id;
-        this.name = department.name;
-        this.userId = department.user_id;
+        this.id = department ? department.id : null;
+        this.name = department ? department.name : null;
+        this.userId = department ? department.user_id : null;
     }
 
-    employees() {
+    users() {
+        console.log(User);
         return this.hasMany(User);
     }
 

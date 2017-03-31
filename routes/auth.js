@@ -14,13 +14,16 @@ var User = require('../models/user');
 
 router.get('/login', function (req, res, next) {
     res.render('auth/login', { title: 'Login | Db-Proj'});
-}); 
+});
 
 router.post('/login', async function (req, res, next) {
     var credentials = req.body;
 
     try {
         var user = await User.where('email', credentials.email).limit(1).first();
+        if (!user) {
+            return next(new Error(['email is not associated with a user']));
+        }
         let hash = await user.hash();
         var result = await compare(credentials.password, hash);
     } catch (err) {
@@ -47,7 +50,7 @@ router.post('/logout', function (req, res, next) {
     }
 
     req.session.destroy(logout);
-}); 
+});
 
 
 module.exports = router;

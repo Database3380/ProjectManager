@@ -13,12 +13,12 @@ var TimeBlock = require('./time-block');
 class User extends Model {
     constructor(user) {
         super();
-        this.id = user.id;
-        this.name = user.name;
-        this.email = user.email;
-        this.payRate = user.pay_rate;
-        this.admin = user.admin;
-        this.departmentId = user.department_id;
+        this.id = user ? user.id : null;
+        this.name = user ? user.name : null;
+        this.email = user ? user.email : null;
+        this.payRate = user ? user.pay_rate : null;
+        this.admin = user ? user.admin : null;
+        this.departmentId = user ? user.department_id : null;
     }
 
     department() {

@@ -4,18 +4,19 @@ var router = require('express').Router();
 
 // Model Imports
 var Department = require('../models/department');
+// var User = require('../models/user');
 
 // Middlware Imports
 var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
-router.use(authOnly);
+// router.use(authOnly);
 
 /* Get Departments */
 router.get('/', async function (req, res, next) {
 
     try {
-        var departments = await Department.get();
+        var departments = await Department.with('users').get();
     } catch (err) {
         return next(err);
     }

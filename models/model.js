@@ -12,9 +12,9 @@ var singular = require('../util/functions/singular');
 
 /****************************************************************************************************
  * Model Object Prototype
- * 
+ *
  * Intended to be extended by the models for application.
- * 
+ *
  * Has both dynamic and static properties/methods:
  * - Static properties are used for querying the database to retrieve models of that typeof.
  * - Dynamic properties are used for querying the database in relation to a specific instance of a model.
@@ -25,6 +25,7 @@ class Model {
 
     constructor() {
         this.query = '';
+        this.withModels = [];
     }
 
     /***************************
@@ -36,6 +37,7 @@ class Model {
     }
 
     hasMany(model) {
+        console.log(40, model);
         return model.where(`${this.constructor.name.toLowerCase()}_id`, this.id);
     }
 
@@ -54,16 +56,21 @@ class Model {
     /**
      * select() is used to add the select clause to the query string
      * pass in an array of fields for the model being queried
-     * 
+     *
      * this function does execute the query, has to followd by get()
-     * 
+     *
      * @param {array} fields | optional
-     * 
+     *
      * @return {object}
      */
     static select(...fields) {
-        this.query = 'SELECT ';
+        let instance = this.getInstance();
+        return instance.select(...fields);
+    }
 
+
+    select (...fields) {
+        this.query = 'SELECT ';
         if (!fields || fields.length == 0) {
             this.query += '* ';
         } else {
@@ -76,7 +83,7 @@ class Model {
             }, this);
         }
 
-        this.query += `FROM ${snakeCase(this.name)}s`;
+        this.query += `FROM ${snakeCase(this.constructor.name)}s`;
 
         return this;
     }
@@ -84,31 +91,34 @@ class Model {
     /**
      * where() adds the where clause to the query string
      * will automatically add a select * clause to query string if not already added
-     * 
+     *
      * returns `this` for function chaining
-     * 
+     *
      * @param {string} column | required
      * @param {enum} operator | defaults to `=`
      * @param {any} value     | required
-     * 
+     *
      * @return {object}
      */
     static where(column, operator, value) {
+        let instance = this.getInstance();
+        return instance.where(column, operator, value);
+    }
+
+
+    where(column, operator, value) {
         if (!this.query.includes('SELECT')) {
-            this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
+            this.query = `SELECT * FROM ${snakeCase(this.constructor.name)}s`;
         }
 
-        this.query += ` WHERE ${column} `;
+        value = value || operator;
 
-        if (operators.includes(operator)) {
-            this.query += `${operator} `;
-        } else {
-            value = operator;
-            this.query += `= `;
+        if (!operators.includes(operator)) {
+            operator = '=';
         }
 
-        this.query += (typeof value === 'string') ? `'${value}'` : value;
-        
+        this.query += ` WHERE ${column} ${operator} '${value}'`
+
         return this;
     }
 
@@ -116,16 +126,22 @@ class Model {
     /**
      * limit() adds the limit clause to the query string
      * will automatically add a select * clause to query string if not already added
-     * 
+     *
      * returns `this` for function chaining
-     * 
+     *
      * @param {number} limit | required
-     * 
+     *
      * @return {object}
      */
     static limit(limit) {
+        let instance = this.getInstance();
+        return instance.limit(limit);
+    }
+
+
+    limit(limit) {
         if (!this.query.includes('SELECT')) {
-            this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
+            this.query = `SELECT * FROM ${snakeCase(this.constructor.name)}s`;
         }
 
         this.query += ` LIMIT ${limit}`;
@@ -137,17 +153,23 @@ class Model {
     /**
      * with() adds models to the static property withModels
      * can be called at any point in the query string before executing (ex. get(), first())
-     * 
+     *
      * Pass in the name of the function defining the relationship
-     * EX. if User has a function named department() that defines a belongsTo relationship to 
+     * EX. if User has a function named department() that defines a belongsTo relationship to
      *     Department class then you would use the argument 'department' in the with function.
-     * 
+     *
      *     User.where('id', 1).with('department').first();=
      * @param {...string} models | required
-     * 
-     * @return {object} 
+     *
+     * @return {object}
      */
     static with(...models) {
+        let instance = this.getInstance();
+        return instance.with(...models);
+    }
+
+
+    with(...models) {
         this.withModels = models;
         return this;
     }
@@ -156,20 +178,26 @@ class Model {
     /**
      * get() is the execution function for the query
      * must be called at the end of every query build
-     * will automatically add the select * clause to query if not already added 
-     * 
+     * will automatically add the select * clause to query if not already added
+     *
      * @return {array} hydrated results, typeof calling model
      */
     static async get(raw = false, instance = false) {
+        let _instance = this.getInstance();
+        return _instance.get(raw, instance);
+    }
+
+
+    async get(raw = false, instance = false) {
         if (!this.query.includes('SELECT')) {
-            this.query = `SELECT * FROM ${snakeCase(this.name)}s`;
+            this.query = `SELECT * FROM ${snakeCase(this.constructor.name)}s`;
         }
-        
+
         try {
             var result = await pool.query(this.query);
         } catch (err) {
             throw err;
-        } 
+        }
 
         this.query = '';
 
@@ -189,7 +217,7 @@ class Model {
     /**
      * first() executes the get() function with the instance argument set as true
      * this causes get() to return a single instance from the query not an array of results
-     * 
+     *
      * @return {function}
      */
     static first(raw = false) {
@@ -197,12 +225,16 @@ class Model {
     }
 
 
+    first(raw = false) {
+        return this.get(raw, true);
+    }
+
     /**
      * create() is used to store a new tuple of the calling models type
-     * 
+     *
      * tuple is an object composed of all the necessary key => value pairs to create a new tuple in db
      * tuple key names will be automatically converted from camelCase to snake_case to be aligned with database attribute names
-     * 
+     *
      * @return {object} single hydrated model from tuple, typeof calling model
      */
     static async create(tuple) {
@@ -215,7 +247,7 @@ class Model {
             }
         }).join(', ');
 
-        this.query = `INSERT INTO ${snakeCase(this.name)}s (${keys}) VALUES (${values}) RETURNING *`;
+        this.query = `INSERT INTO ${snakeCase(this.constructor.name)}s (${keys}) VALUES (${values}) RETURNING *`;
 
         try {
             var result = await pool.query(this.query);
@@ -230,35 +262,40 @@ class Model {
 
     /**
      * fetchWith() attaches the models in withModels to each result
-     * the relevant models will be attached to each result in a object set as the 
+     * the relevant models will be attached to each result in a object set as the
      * with property. (ex. result.with = { department: {}, projects: [] })
-     * 
+     *
      * @param {array} results | required
-     * 
+     *
      * @return {Promise} returns a parallel promise object
      */
-    static fetchWith(results) {
+    fetchWith(results) {
         return Promise.all(results.map(async function (result) {
             result.with = {};
             for (let model of this.withModels) {
-
+                console.log(result)
                 result.with[model] = singular(model) ? await result[model]().first() : await result[model]().get();
             }
             return result;
         }, this))
-    } 
+    }
 
 
     /**
      * hydrate() is used to query results into named and functional objects of the correct type
-     * 
+     *
      * @param {array} objects | required
      */
-    static hydrate(objects) {
+    hydrate(objects) {
         return objects.map(function (object) {
-            return new this(object);
+            return new this.constructor(object);
         }, this);
     }
+
+    static getInstance() {
+        return new this();
+    }
+
 }
 
 
