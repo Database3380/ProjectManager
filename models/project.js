@@ -22,7 +22,7 @@ class Project extends Model {
         return this.belongsTo(Department);
     }
 
-    manager() {
+    user() {
         return this.belongsTo(User);
     }
 

@@ -33,11 +33,10 @@ class User extends Model {
     }
 
     tasks() {
-        // let Task = taskInstance();
         return this.hasMany(Task);
     }
 
-    worked() {
+    timeBlocks() {
         return this.hasMany(TimeBlock);
     }
 

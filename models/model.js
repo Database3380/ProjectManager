@@ -116,10 +116,18 @@ class Model {
             this.query += `${operator} `;
         } else {
             value = operator;
-            this.query += `= `;
+            if (value === null && typeof value === 'object') {
+                this.query += 'IS ';
+            } else {
+                this.query += `= `;
+            }
         }
 
-        this.query += `$$${value}$$`;
+        if (value === null && typeof value === 'object') {
+            this.query += 'NULL';
+        } else {
+            this.query += `$$${value}$$`;
+        }
         
         return this;
     }
@@ -264,6 +272,26 @@ class Model {
         var instance = this.getInstance();
         return instance.create(tuple);
     }
+
+
+    async update(tuple) {
+        var stamp =  timestamp();
+        let keys = Object.keys(tuple).map(key => snakeCase(key)).concat(['updated_at']).join(', ');
+        let values = Object.values(tuple).map(value => `$$${value}$$`).concat([`$$${stamp}$$`]).join(', ');
+
+        this.query = `UPDATE ${snakeCase(this.constructor.name)}s SET (${keys}) = (${values}) WHERE id = ${this.id}`
+
+        try {
+            var result = await pool.query(this.query);
+        } catch (err) {
+            throw err;
+        }
+
+        this.query = '';
+
+        return this.hydrate(result.rows)[0];
+    }
+
     /**
      * fetchWith() attaches the models in withModels to each result
      * the relevant models will be attached to each result in a object set as the 

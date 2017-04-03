@@ -6,15 +6,17 @@ var Model = require('./model');
 
 
 class TimeBlock extends Model {
-    constructor() {
+    constructor(timeBlock) {
         super();
-        this.id = timeBlock.id;
-        this.userId = timeBlock.user_id;
-        this.taskId = timeBlock.task_id;
-        this.projectId = timeBlock.project_id;
-        this.startTime = new Date(timeBlock.start_time);
-        this.endTime = new Date(timeBlock.end_time);
-        this.duration = this.endTime.getTime() - this.startTime.getTime();
+        if (timeBlock) {
+            this.id = timeBlock.id;
+            this.userId = timeBlock.user_id;
+            this.taskId = timeBlock.task_id;
+            this.projectId = timeBlock.project_id;
+            this.startTime = new Date(timeBlock.start_time);
+            this.endTime = timeBlock.end_time ? new Date(timeBlock.end_time) : null;
+            this.duration = this.endTime ? this.endTime.getTime() - this.startTime.getTime() : null;
+        }
     }
 
     user() {
