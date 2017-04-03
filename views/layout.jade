@@ -7,12 +7,12 @@ html
 
     block head
   body
-    div.container-fluid.d-flex
+    div.container-fluid.d-flex(style='padding: 0;')
       div.d-flex.flex-column
         p
           strong Sidebar
       div.d-flex.flex-column.w-100
-        nav.navbar.navbar-toggleable-md.navbar-light.bg-faded
+        nav.navbar.navbar-toggleable-md.navbar-light(style='background: #eee;')
           div.container
             button.navbar-toggler.navbar-toggler-right(type='button', data-toggel='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle Navigation')
               span.navbar-toggler-icon
@@ -22,20 +22,20 @@ html
               a.navbar-brand(href='/') Project
             div#navbarNav.collapse.navbar-collapse
               ul.navbar-nav
-                li.nav-item
-                  a.nav-link(href='/users') Users
-                li.nav-item
-                  a.nav-link(href='/departments') Departments
-                li.nav-item
-                  a.nav-link(href='/projects') Projects
-                li.nav-item
+                &nbsp;
+              ul.navbar-nav.navbar-right.d-flex.justify-content-end
                   if auth
-                    form.form-inline.my-2.my-lg-0(method='POST', action='/auth/logout')
-                      button.nav-link(type='submit') Logout
+                    li.dropdown
+                      a#dropdownMenu.dropdown-toggle(href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')= user.name
+                      div.dropdown-menu(aria-labelledby='dropdownMenu')
+                        form.form-inline.my-2.my-lg-0(method='POST', action='/auth/logout')
+                          button.dropdown-item(type='submit') Logout
+                    
                   else
-                    a.nav-link(href='/auth/login') Login
+                    li
+                      a.nav-link(href='/auth/login') Login
 
-        
+                
         block content
 
     include includes/foot.jade

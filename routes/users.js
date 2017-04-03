@@ -33,6 +33,7 @@ router.get('/', async function(req, res, next) {
 /* Store new User */
 router.post('/', async function (req, res, next) {
   const user = req.body;
+  user.admin = user.admin || false;
 
   try {
     user.password = await hash(user.password);
@@ -45,14 +46,26 @@ router.post('/', async function (req, res, next) {
 });
 
 router.get('/create', async function (req, res, next) {
-  
+    var user = new User(req.session.user);
+
     try {
         var departments = await Department.get();
     } catch (err) {
         return next(err);
     }
 
-    res.render('creation/user', { title: 'New User', auth: Boolean(req.session.user), departments: departments });
+    if (!user.admin) {
+      departments = departments.filter(function (department) {
+        return department.id == user.departmentId;
+      });
+    }
+
+    res.render('creation/user', { 
+      title: 'New User', 
+      auth: Boolean(req.session.user), 
+      departments: departments,
+      admin: user.admin 
+    });
 });
 
 

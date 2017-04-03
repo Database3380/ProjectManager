@@ -1,0 +1,89 @@
+extends layout.jade
+
+block content
+    .container
+        div.list-group
+            div.list-group-item.d-flex.w-100.justify-content-between
+                div.d-flex
+                    svg#complete.check-mark(class= project.completed ? 'completed' : '',xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", x="0px", y="0px", viewBox="0 0 100 100", enable-background="new 0 0 100 100", xml:space="preserve", data-toggle="tooltip", data-placement="bottom", title= project.completed ? 'Mark project incomplete' : 'Mark project complete')
+                        g
+                            path(fill="none", d="M49.999,6.957c-23.733,0-43.043,19.309-43.043,43.044c0,23.733,19.309,43.043,43.043,43.043   c23.735,0,43.044-19.309,43.044-43.043C93.043,26.266,73.734,6.957,49.999,6.957z M75.682,39.465L45.108,70.041   c-0.512,0.511-1.19,0.792-1.909,0.792c-0.721,0-1.401-0.281-1.911-0.792L24.317,53.069c-1.053-1.05-1.054-2.765-0.001-3.82   l5.683-5.684c1.022-1.02,2.801-1.018,3.819,0l9.38,9.379L66.183,29.96c1.016-1.022,2.799-1.024,3.819,0.002l5.68,5.68   c0.51,0.503,0.793,1.184,0.793,1.911C76.476,38.275,76.194,38.954,75.682,39.465z")
+                            path#check(class= project.completed ? 'completed' : '', fill="none", d="M68.618,31.343c-0.285-0.285-0.768-0.283-1.049-0.002l-24.37,24.37L32.435,44.948   c-0.14-0.14-0.327-0.217-0.525-0.217c-0.2,0-0.387,0.077-0.528,0.218L25.7,50.631c-0.29,0.291-0.291,0.764-0.001,1.054   l16.972,16.972c0.281,0.281,0.767,0.283,1.054-0.001L74.3,38.08c0.142-0.141,0.22-0.329,0.22-0.527c0-0.2-0.076-0.386-0.216-0.524   L68.618,31.343z")
+                            path(d="M70.003,29.962c-1.02-1.026-2.803-1.024-3.819-0.002L43.199,52.944l-9.38-9.379c-1.018-1.018-2.797-1.02-3.819,0   l-5.683,5.684c-1.053,1.056-1.052,2.77,0.001,3.82l16.971,16.971c0.51,0.511,1.189,0.792,1.911,0.792   c0.718,0,1.397-0.281,1.909-0.792l30.574-30.576c0.512-0.51,0.794-1.189,0.794-1.912c0-0.727-0.283-1.407-0.793-1.911   L70.003,29.962z M74.3,38.08L43.725,68.657c-0.287,0.284-0.773,0.282-1.054,0.001L25.699,51.685   c-0.29-0.289-0.289-0.762,0.001-1.054l5.681-5.682c0.141-0.14,0.329-0.218,0.528-0.218c0.199,0,0.385,0.076,0.525,0.217   l10.764,10.763l24.37-24.37c0.281-0.281,0.764-0.283,1.049,0.002l5.686,5.686c0.139,0.138,0.216,0.324,0.216,0.524   C74.52,37.752,74.442,37.939,74.3,38.08z")
+                            path(d="M49.999,5C25.186,5,5,25.187,5,50.001C5,74.814,25.186,95,49.999,95C74.813,95,95,74.814,95,50.001   C95,25.187,74.813,5,49.999,5z M49.999,93.043c-23.733,0-43.043-19.309-43.043-43.043c0-23.735,19.309-43.044,43.043-43.044   c23.735,0,43.044,19.309,43.044,43.044C93.043,73.734,73.734,93.043,49.999,93.043z")
+                    h3(style='margin: 0 0 0 25px;')= project.name
+                small(class= new Date(project.dueDate) < new Date() ? 'past-due' : '')= new Date(project.dueDate).toDateString()
+            div.list-group-item
+                div.col-2
+                    strong Department:
+                div.col-10
+                    a(href='#')
+                        strong= project.with.department.name
+            div.list-group-item
+                div.col-2
+                    strong Manager: 
+                div.col-10
+                    a(href='#')
+                        strong= project.with.user.name
+            div.list-group-item.align-items-start
+                div.col-2
+                    strong Description: 
+                
+                div.col-10!= project.description
+            div.list-group-item.align-items-start
+                div.col-2
+                    strong Tasks:
+                div.col-10
+                    div.list-group.no-margin
+                        each task in project.with.tasks
+                            div.list-group-item.d-flex.w-100.justify-content-between
+                                div.d-flex
+                                    a.circle(class= task.userColor + '-background',href=`/users/${task.userId}`, data-toggle="tooltip", data-placement="bottom", title='View assigned user')
+                                        strong= task.userInitials
+                                    a(href=`/tasks/${task.id}`): h5.v-center(style='margin: 0 0 0 25px;')= task.name
+                                div.d-flex
+                                    small.v-center(class= new Date(task.dueDate) < new Date() ? 'past-due' : '')= new Date(task.dueDate).toDateString()
+                                    svg#complete.check-mark-inactive(class= task.completed ? 'completed' : '',xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", x="0px", y="0px", viewBox="0 0 100 100", enable-background="new 0 0 100 100", xml:space="preserve")
+                                        g
+                                            path(fill="none", d="M49.999,6.957c-23.733,0-43.043,19.309-43.043,43.044c0,23.733,19.309,43.043,43.043,43.043   c23.735,0,43.044-19.309,43.044-43.043C93.043,26.266,73.734,6.957,49.999,6.957z M75.682,39.465L45.108,70.041   c-0.512,0.511-1.19,0.792-1.909,0.792c-0.721,0-1.401-0.281-1.911-0.792L24.317,53.069c-1.053-1.05-1.054-2.765-0.001-3.82   l5.683-5.684c1.022-1.02,2.801-1.018,3.819,0l9.38,9.379L66.183,29.96c1.016-1.022,2.799-1.024,3.819,0.002l5.68,5.68   c0.51,0.503,0.793,1.184,0.793,1.911C76.476,38.275,76.194,38.954,75.682,39.465z")
+                                            path#check(class= task.completed ? 'completed' : '', fill="none", d="M68.618,31.343c-0.285-0.285-0.768-0.283-1.049-0.002l-24.37,24.37L32.435,44.948   c-0.14-0.14-0.327-0.217-0.525-0.217c-0.2,0-0.387,0.077-0.528,0.218L25.7,50.631c-0.29,0.291-0.291,0.764-0.001,1.054   l16.972,16.972c0.281,0.281,0.767,0.283,1.054-0.001L74.3,38.08c0.142-0.141,0.22-0.329,0.22-0.527c0-0.2-0.076-0.386-0.216-0.524   L68.618,31.343z")
+                                            path(d="M70.003,29.962c-1.02-1.026-2.803-1.024-3.819-0.002L43.199,52.944l-9.38-9.379c-1.018-1.018-2.797-1.02-3.819,0   l-5.683,5.684c-1.053,1.056-1.052,2.77,0.001,3.82l16.971,16.971c0.51,0.511,1.189,0.792,1.911,0.792   c0.718,0,1.397-0.281,1.909-0.792l30.574-30.576c0.512-0.51,0.794-1.189,0.794-1.912c0-0.727-0.283-1.407-0.793-1.911   L70.003,29.962z M74.3,38.08L43.725,68.657c-0.287,0.284-0.773,0.282-1.054,0.001L25.699,51.685   c-0.29-0.289-0.289-0.762,0.001-1.054l5.681-5.682c0.141-0.14,0.329-0.218,0.528-0.218c0.199,0,0.385,0.076,0.525,0.217   l10.764,10.763l24.37-24.37c0.281-0.281,0.764-0.283,1.049,0.002l5.686,5.686c0.139,0.138,0.216,0.324,0.216,0.524   C74.52,37.752,74.442,37.939,74.3,38.08z")
+                                            path(d="M49.999,5C25.186,5,5,25.187,5,50.001C5,74.814,25.186,95,49.999,95C74.813,95,95,74.814,95,50.001   C95,25.187,74.813,5,49.999,5z M49.999,93.043c-23.733,0-43.043-19.309-43.043-43.043c0-23.735,19.309-43.044,43.043-43.044   c23.735,0,43.044,19.309,43.044,43.044C93.043,73.734,73.734,93.043,49.999,93.043z")
+
+
+
+block foot
+    script.
+        document.getElementById('complete').addEventListener('mouseup', function (event) {
+            var project = !{JSON.stringify(project)}
+            
+            var req = new Promise(function (resolve, reject) {
+                superagent
+                    .post(`/projects/${project.id}/complete`)
+                    .set('Accept', 'application/json')
+                    .end(function (err, res) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(res.body)
+                        }
+                    });
+            });
+
+            req.then(function(result) {
+                var circle = document.getElementById('complete');
+                circle.classList.toggle('completed')
+                if (circle.classList.contains('completed')) {
+                    circle.setAttribute('data-original-title', 'Mark task incomplete')
+                } else {
+                    circle.setAttribute('data-original-title', 'Mark task complete')
+                }
+                document.getElementById('check').classList.toggle('completed')
+            }).catch(function(err) {
+                console.error(err);
+            });
+        });
+        
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })

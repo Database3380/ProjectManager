@@ -34,6 +34,8 @@ router.post('/', async function (req, res, next) {
     task.description.replace(/\r?\n|\r/, '');
 
     try {
+        var user = await User.where('id', task.userId).first();
+        task.userInitials = user.name.split(' ').map(name => name[0]).join();
         var newTask = await Task.create(task);
     } catch (err) {
         return next(err);
@@ -41,6 +43,7 @@ router.post('/', async function (req, res, next) {
 
     res.json(newTask);
 });
+
 
 router.get('/create', async function (req, res, next) {
     var user = new User(req.session.user);
@@ -77,13 +80,35 @@ router.get('/:id', async function (req, res, next) {
     var taskId = req.params.id;
 
     try {
-        var task = await user.tasks().where('id', taskId).first();
+        var task = await user.tasks().where('id', taskId).with('project').first();
+        var activeTimeBlock = await user.timeBlocks().where('end_time', null).where('task_id', task.id).limit(1).first();
     } catch (err) {
         return next(err);
     }
 
-    res.render('task', { title: `Task Id: ${taskId}`, auth: Boolean(user), task: task });
+    res.render('task', { 
+        title: `Task Id: ${taskId}`, 
+        auth: Boolean(user), 
+        user: user, 
+        task: task, 
+        timeBlock: activeTimeBlock || null
+    });
 });
 
+
+
+router.post('/:id/complete', async function (req, res, next) {
+    var user = new User(req.session.user);
+    var taskId = req.params.id;
+
+    try {
+        var task = await user.tasks().where('id', taskId).first();
+        var result = await task.update({ completed: !task.completed });
+    } catch (err) {
+        return next(err);
+    }
+
+    res.json(result);
+});
 
 module.exports = router;

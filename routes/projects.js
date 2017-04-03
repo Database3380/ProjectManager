@@ -8,6 +8,8 @@ var User = require('../models/user');
 var Department = require('../models/department');
 // Middlware Imports
 var authOnly = require('../middleware/auth-only');
+
+var _ = require('lodash');
 /********************************************************/
 
 // router.use(authOnly);
@@ -61,7 +63,7 @@ router.get('/create', async function (req, res, next) {
 
     res.render('creation/project', { 
         title: 'New Project', 
-        auth: Boolean(req.session.user), 
+        auth: req.auth, 
         users: users, 
         departments: departments 
     });
@@ -69,16 +71,44 @@ router.get('/create', async function (req, res, next) {
 
 /* Get project with id */
 router.get('/:id', async function (req, res, next) {
-    let id = req.params.id;
+    var user = new User(user);
+    var id = req.params.id;
 
     try {
-        var project = await Project.where('id', id).limit(1).first();
+        var project = await Project.where('id', id).limit(1).with('tasks', 'user', 'department').first();
     } catch (err) {
         return next(err);
     }
 
-    res.render('index', { title: `Project with id = ${id}`, results: project, auth: req.auth });
+    project.with.tasks = _.orderBy(project.with.tasks, 'dueDate');
+
+    res.render('project', { 
+        title: `Project with id = ${id}`, 
+        auth: req.auth, 
+        user: user, 
+        project: project 
+    });
 })
 
+
+router.post('/:id/complete', async function (req, res, next) {
+    var user = new User(req.session.user)
+    var id = req.params.id;
+
+    try {
+        var project = await Project.where('id', id).limit(1).with('tasks').first();
+
+        incompleteTasks = project.with.tasks.filter(task => !task.complete);
+        if (incompleteTasks.length > 0) {
+            throw new Error('All tasks must be complete to complete a project.');
+        } else {
+            var result = await project.update({ complete: !project.complete });
+        }
+    } catch (err) {
+        return next(err);
+    }
+
+    res.json(result);
+});
 
 module.exports = router;

@@ -2,17 +2,23 @@ extends layout
 
 block content
     div.container 
-        div.list-group
-            each project in projects
+        div.d-flex.justify-content-end.w-100
+            if completed
+                a.btn.btn-secondary(href='/dashboard', style='margin: 15px 0 -15px 0;') View Incomplete
+            else
+                a.btn.btn-secondary(href='/dashboard/completed', style='margin: 15px 0 -15px 0;') View Completed
+        each project in projects
+            div.list-group
                 div.list-group-item.list-group-item-info
-                    h3= project.name
+                   a(href=`/projects/${project.id}`): h3= project.name
                 each task in tasks
                     if task.projectId == project.id
                         a.list-group-item.list-group-item-action(href=`/tasks/${task.id}`)
                                                 
                             div.d-flex.w-100.justify-content-between
-                 
-                                h5.mb-1= task.name
+                                div.d-flex
+                                    div.circle-inactive(class= task.userColor + '-background'): strong= task.userInitials
+                                    h5.mb-1.v-center(style='margin: 0 0 0 15px;')= task.name
 
-                                small.text-muted= new Date(task.dueDate).toDateString()
+                                small.text-muted.v-center(class= new Date(task.dueDate) < new Date() ? 'past-due' : '')= new Date(task.dueDate).toDateString()
 

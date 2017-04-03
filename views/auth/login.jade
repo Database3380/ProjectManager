@@ -1,18 +1,18 @@
-extends ../layout
+extends ../splash
 
 block content
     div.main.container
         div.row.align-items-center.justify-content-center
-            div.col-6
+            div.col-4.login
                 h2 Login
                 form(method='POST', action='/auth/login')
                     div.form-group
-                        label(for='email') Email
+                        //- label(for='email') Email
 
-                        input#email.form-control(type='email', name='email', value='dean@email.com')
+                        input#email.form-control(type='email', name='email', value='dean@email.com', placeholder='Email Address')
                     div.form-group
-                        label(for='password') Password
-                        input#password.form-control(type='password', name='password', value='secret')
+                        //- label(for='password') Password
+                        input#password.form-control(type='password', name='password', value='secret', placeholder='Password')
 
                     div.form-group
-                        button.btn.btn-primary(type='submit') Login
+                        button.btn.btn-primary.w-100(type='submit') Login
