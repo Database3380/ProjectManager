@@ -1,3 +1,8 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
@@ -10,6 +15,289 @@ ul.navbar-nav {
   width: 100%;
 }
 
-.float-right {
-  float: right;
+.past-due {
+  color: red !important;
+}
+
+.list-group {
+  margin: 30px 0;
+}
+
+.check-mark {
+  height: 30px;
+  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.check-mark:hover {
+  fill: limegreen;
+  transform: scale(1.2);
+}
+
+.check-mark-inactive {
+  height: 26px;
+  margin: 0 0 0 10px;
+}
+
+.splash {
+  display: flex;
+  justify-content: center;
+  padding-top: 10%;
+  height: 100%;
+  width: 100%;
+  background-color: #bad0b8;
+  background-image: -webkit-linear-gradient(right, #FC7864, #FDA366);
+  background-image: -moz-linear-gradient(right, #FC7864, #FDA366);
+  background-image: -o-linear-gradient(right, #FC7864, #FDA366);
+  background-image: -ms-linear-gradient(right, #FC7864, #FDA366);
+  background-image: linear-gradient(right, #FC7864, #FDA366);
+}
+
+.login {
+  background: #fff;
+  border: 1px solid #fff;
+  border-radius: 3px;
+  padding: 25px;
+  text-align: center;
+}
+
+.completed {
+  fill: limegreen;
+  stroke-width: 10;
+}
+
+.no-margin {
+  margin: 0 !important;
+}
+
+.circle, .circle-inactive {
+  height: 26px;
+  width: 26px;
+  border-radius: 13px;
+  /*background-color: deeppink;*/
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.circle:hover {
+  /*background-color: darkmagenta;*/
+  color: white;
+  text-decoration: none;
+  transform: scale(1.2);
+}
+
+.circle-lg {
+  height: 30px;
+  width: 30px;
+  border-radius: 15px;
+  /*background-color: deeppink;*/
+  color: white;
+  margin: 0 0 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.circle-lg:hover {
+  /*background-color: darkmagenta;*/
+  color: white;
+  text-decoration: none;
+  transform: scale(1.2);
+}
+
+.v-center {
+  line-height: 26px;
+}
+
+.list-group-item-action:hover {
+  background: #efefef;
+}
+
+.list-group-item-info > a {
+  color: #31708f;
+}
+
+.list-group-item-info > a:hover {
+  color: #31708f;
+  text-decoration: none;
+}
+
+.red {
+  color: #F44336;
+}
+
+.red:hover {
+  color: #E53935;
+}
+
+.pink {
+  color: #E91E63;
+}
+
+.pink:hover {
+  color: #D81B60;
+}
+
+.purple {
+  color: #9C27B0;
+}
+
+.purple:hover {
+  color: #8E24AA;
+}
+
+.blue {
+  color: #2196F3;
+}
+
+.blue:hover {
+  color: #1E88E5;
+}
+
+.cyan {
+  color: #00BCD4;
+}
+
+.cyan:hover {
+  color: #00ACC1;
+}
+
+.teal {
+  color: #009688;
+}
+
+.teal:hover {
+  color: #00897B;
+}
+
+.green {
+  color: #4CAF50;
+}
+
+.green:hover {
+  color: #43A047;
+}
+
+.yellow {
+  color: #FFEB3B;
+}
+
+.yellow:hover {
+  color: #FDD835;
+}
+
+.orange {
+  color: #FF9800;
+}
+
+.orange:hover {
+  color: #FB8C00;
+}
+
+.deeporange {
+  color: #FF5722;
+}
+
+.deeporange:hover {
+  color: #F4511E;
+}
+
+.bluegrey {
+  color: #607D8B;
+}
+
+.bluegrey:hover {
+  color: #546E7A;
+}
+
+
+.red-background {
+  background-color: #F44336;
+}
+
+.red-background:hover {
+  background-color: #E53935;
+}
+
+.pink-background {
+  background-color: #E91E63;
+}
+
+.pink-background:hover {
+  background-color: #D81B60;
+}
+
+.purple-background {
+  background-color: #9C27B0;
+}
+
+.purple-background:hover {
+  background-color: #8E24AA;
+}
+
+.blue-background {
+  background-color: #2196F3;
+}
+
+.blue-background:hover {
+  background-color: #1E88E5;
+}
+
+.cyan-background {
+  background-color: #00BCD4;
+}
+
+.cyan-background:hover {
+  background-color: #00ACC1;
+}
+
+.teal-background {
+  background-color: #009688;
+}
+
+.teal-background:hover {
+  background-color: #00897B;
+}
+
+.green-background {
+  background-color: #4CAF50;
+}
+
+.green-background:hover {
+  background-color: #43A047;
+}
+
+.yellow-background {
+  background-color: #FFEB3B;
+}
+
+.yellow-background:hover {
+  background-color: #FDD835;
+}
+
+.orange-background {
+  background-color: #FF9800;
+}
+
+.orange-background:hover {
+  background-color: #FB8C00;
+}
+
+.deeporange-background {
+  background-color: #FF5722;
+}
+
+.deeporange-background:hover {
+  background-color: #F4511E;
+}
+
+.bluegrey-background {
+  background-color: #607D8B;
+}
+
+.bluegrey-background:hover {
+  background-color: #546E7A;
 }
