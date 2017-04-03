@@ -127,6 +127,7 @@ CREATE TABLE tasks (
     description text NOT NULL,
     due_date date NOT NULL,
     completed boolean NOT NULL DEFAULT false, 
+    user_initials character varying NOT NULL DEFAULT $$NA$$,
     user_id integer NOT NULL,
     project_id integer NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL,
