@@ -14,7 +14,7 @@ block content
                         input#name.form-control(name='name', type='text')
                     div.form-group
                         label(for='dueDate') Due Date 
-                        input#dueDate.form-control(name='dueDate', type='date', value=new Date().toISOString().substr(0,10))
+                        input#dueDate.form-control(name='dueDate', type='date', value=new Date().toISOString().substr(0,10), min=new Date().toISOString().substr(0,10))
                     div.form-group
                         label(for='description') Description
                         textarea#description.form-control(name='description')
@@ -41,3 +41,12 @@ block foot
             statusbar: false,
             min_height: 300
         });
+        var projects = !{JSON.stringify(projects)}
+        document.getElementById('project').addEventListener('change', function (event) {
+            var selectedProject = projects.filter(function (project) {
+                return project.id == event.target.value;
+            })[0];
+
+            document.getElementById('dueDate').setAttribute('max', selectedProject.dueDate.substr(0, 10));
+        });
+        
