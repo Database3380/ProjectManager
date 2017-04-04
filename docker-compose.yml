@@ -18,6 +18,8 @@ services:
       - .:/home/app/dbproject
       - /home/app/dbproject/node_modules
       - /home/app/dbproject/front-end
+    stdin_open: true
+    tty: true
   db:
     build:
       context: .

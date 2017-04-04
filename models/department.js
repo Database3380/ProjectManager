@@ -23,7 +23,7 @@ class Department extends Model {
     }
 
     projects() {
-        return this.hasMany(Project);
+        return this.hasMany(Project)/*...*/;
     }
 }
 

@@ -15,3 +15,5 @@ USER root
 COPY . $HOME/dbproject
 RUN chown -R app:app $HOME/*
 USER app
+
+EXPOSE 3000/tcp
