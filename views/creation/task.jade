@@ -10,7 +10,7 @@ block content
             div.card-block
                 form#user-form(method='POST', action='/tasks')
                     div.form-group
-                        label(for='name') Name
+                        label(for='name') Task Name
                         input#name.form-control(name='name', type='text')
                     div.form-group
                         label(for='dueDate') Due Date 
@@ -29,7 +29,7 @@ block content
                             for project in projects
                                 option(value=project.id)= project.name
                     div.form-group
-                        button.btn.btn-primary(type='submit') Create
+                        button.btn.btn-primary(type='submit') Create Task
 
 block foot
     script.

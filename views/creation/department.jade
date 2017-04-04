@@ -9,10 +9,10 @@ block content
                         label(for='name') Name
                         input#name.form-control(name='name', type='text')
                     div.form-group
-                        label(for='manager') Manager (Optional)
+                        label(for='manager') Department Manager (Optional)
                         select#manager.form-control(name='userId')
-                            option(value='None', selected) No Manager
+                            option(value='None', selected) No Department Manager
                             for user in users
                                 option(value=user.id)= user.name
                     div.form-group
-                        button.btn.btn-primary(type='submit') Create
+                        button.btn.btn-primary(type='submit') Create Department

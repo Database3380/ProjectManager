@@ -10,7 +10,7 @@ block content
             div.card-block
                 form#user-form(method='POST', action='/projects')
                     div.form-group
-                        label(for='name') Name
+                        label(for='name') Project Name
                         input#name.form-control(name='name', type='text')
                     div.form-group
                         label(for='dueDate') Due Date 
@@ -24,7 +24,7 @@ block content
                     div.form-group
                         label(for='manager') Project manager
                         select#manager.form-control(name='userId')
-                            option(value='None', selected) No manager
+                            option(value='None', selected) No Project manager
                             for user in users
                                 option(value=user.id)= user.name
                     div.form-group
@@ -33,7 +33,7 @@ block content
                             for department in departments
                                 option(value=department.id)= department.name
                     div.form-group
-                        button.btn.btn-primary(type='submit') Create
+                        button.btn.btn-primary(type='submit') Create Project
 
 block foot
     script.
