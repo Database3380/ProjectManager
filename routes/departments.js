@@ -36,7 +36,7 @@ router.post('/', async function (req, res, next) {
         return next(err);
     }
 
-    req.redirect('/dashboard');
+    res.redirect('/dashboard');
     // res.json(newDepartment);
 });
 
