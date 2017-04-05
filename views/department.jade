@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    div.container
+        div.list-group
+            div.list-group-item
+                h3= department.name
+            div.list-group-item
+                div.d-flex
+                    h5 Managed By: 
+                    if department.userId
+                        a(href=`/users/${department.userId}`): h5= department.with.user.name
+                    else
+                        h5 No Department Manager
+        
+        div.list-group

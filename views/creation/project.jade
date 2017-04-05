@@ -12,26 +12,31 @@ block content
                     div.form-group
                         label(for='name') Name
                         input#name.form-control(name='name', type='text')
-                    div.form-group
-                        label(for='dueDate') Due Date 
-                        input#dueDate.form-control(name='dueDate', type='date', value=new Date().toISOString().substr(0,10))
+                    div.d-flex
+                        div.form-group.col-6(style='padding-left: 0;')
+                            label(for='dueDate') Due Date 
+                            input#dueDate.form-control(name='dueDate', type='date', value=new Date().toISOString().substr(0,10))
+                        div.form-group.col-6(style='padding-right: 0;')
+                            label(for='budget') Budget
+                            input#budget.form-control(name='budget', type='number', min='1.00', step='.01')
+
+                    div.d-flex
+                        div.form-group.col-6(style='padding-left: 0;')
+                            label(for='manager') Project manager
+                            select#manager.form-control(name='userId')
+                                option(value='None', selected) No manager
+                                for user in users
+                                    option(value=user.id)= user.name
+                        div.form-group.col-6(style='padding-right: 0;')
+                            label(for='department') Department
+                            select#department.form-control(name='departmentId')
+                                for department in departments
+                                    option(value=department.id)= department.name
                     div.form-group
                         label(for='description') Description
                         textarea#description.form-control(name='description')
-                    div.form-group
-                        label(for='budget') Budget
-                        input#budget.form-control(name='budget', type='number', min='1.00', step='.01')
-                    div.form-group
-                        label(for='manager') Project manager
-                        select#manager.form-control(name='userId')
-                            option(value='None', selected) No manager
-                            for user in users
-                                option(value=user.id)= user.name
-                    div.form-group
-                        label(for='department') Department
-                        select#department.form-control(name='departmentId')
-                            for department in departments
-                                option(value=department.id)= department.name
+                    
+                    
                     div.form-group
                         button.btn.btn-primary(type='submit') Create
 
@@ -43,5 +48,5 @@ block foot
             toolbar: 'undo redo | styleselect | bold italic | bullist numlist | link image',
             menubar: false,
             statusbar: false,
-            min_height: 300
+            min_height: 200
         });

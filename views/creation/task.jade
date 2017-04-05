@@ -15,19 +15,21 @@ block content
                     div.form-group
                         label(for='dueDate') Due Date 
                         input#dueDate.form-control(name='dueDate', type='date', value=new Date().toISOString().substr(0,10), min=new Date().toISOString().substr(0,10))
+                    div.d-flex
+                        div.form-group.col-6(style='padding-left: 0;')
+                            label(for='assigned') Assigned To
+                            select#assigned.form-control(name='userId')
+                                for user in users
+                                    option(value=user.id)= user.name
+                        div.form-group.col-6(style='padding-right: 0;')
+                            label(for='project') Project
+                            select#project.form-control(name='projectId')
+                                for project in projects
+                                    option(value=project.id)= project.name
                     div.form-group
                         label(for='description') Description
                         textarea#description.form-control(name='description')
-                    div.form-group
-                        label(for='assigned') Assigned To
-                        select#assigned.form-control(name='userId')
-                            for user in users
-                                option(value=user.id)= user.name
-                    div.form-group
-                        label(for='project') Project
-                        select#project.form-control(name='projectId')
-                            for project in projects
-                                option(value=project.id)= project.name
+                    
                     div.form-group
                         button.btn.btn-primary(type='submit') Create
 
@@ -39,7 +41,7 @@ block foot
             toolbar: 'undo redo | styleselect | bold italic | bullist numlist | link image',
             menubar: false,
             statusbar: false,
-            min_height: 300
+            min_height: 200
         });
         var projects = !{JSON.stringify(projects)}
         document.getElementById('project').addEventListener('change', function (event) {

@@ -2,6 +2,11 @@ extends layout
 
 block content
     div.container
+        div.d-flex.justify-content-start.w-100
+            if task.completed
+                a.btn.btn-secondary(href='/dashboard/completed', style='margin: 15px 0 -15px 0;') Back To Tasks
+            else
+                a.btn.btn-secondary(href='/dashboard', style='margin: 15px 0 -15px 0;') Back To Tasks
         div.list-group
             div.list-group-item.d-flex.w-100.justify-content-between
                 div.d-flex
@@ -20,16 +25,18 @@ block content
                     strong Project:
                     a(href=`/projects/${task.with.project.id}`)
                         strong= task.with.project.name
-                div
-                    if timeBlock
-                        button#stoptimer.btn.btn-sm.btn-warning(data-taskId= task.id, data-projectId= task.projectId) Stop Timer 
+                div 
+                    if task.with.timeBlocks.length > 0
+                        button#stoptimer.btn.btn-sm.btn-warning(data-taskId= task.id, data-projectId= task.projectId, data-toggle="tooltip", data-placement="bottom", title='Stop working on task') Stop Timer 
                     else
-                        button#timer.btn.btn-sm.btn-info(data-taskId= task.id, data-projectId= task.projectId) Start Timer
-            div.list-group-item
+                        button#timer.btn.btn-sm.btn-info(data-taskId= task.id, data-projectId= task.projectId, data-toggle="tooltip", data-placement="bottom", title='Start working on task') Start Timer
+            div.list-group-item.d-flex.justify-content-between
                 div.w-25.d-flex.justify-content-between
                     strong= 'Assigned To: '
                     a(href='#')
                         strong= user.name
+                div
+                    div#incrementing-timer= `Time Worked: ${task.worked.hours < 10 ? '0' + task.worked.hours : task.worked.hours}:${task.worked.minutes < 10 ? '0' + task.worked.minutes : task.worked.minutes}:${task.worked.seconds < 10 ? '0' + task.worked.seconds : task.worked.seconds}`
             div.list-group-item
                 div!= task.description
 
@@ -66,62 +73,110 @@ block foot
             });
         });
 
-        if (document.getElementById('timer')) {
-            document.getElementById('timer').addEventListener('mouseup', function (event) {
-                var el = this;
-                var taskId = this.getAttribute('data-taskId');
-                var projectId = this.getAttribute('data-projectId');
-                
-                var req = new Promise(function (resolve, reject) {
-                    superagent
-                        .post(`/time-blocks`)
-                        .set('Content-Type', 'application/json')
-                        .set('Accept', 'application/json')
-                        .send({taskId, projectId})
-                        .end(function (err, res) {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve(res.body);
-                            }
-                        });
-                });
+        var worked = !{JSON.stringify(task.worked)}
 
-                req.then(function (result) {
-                    console.log(result);
-                }).catch(function (err) {
-                    console.error(err);
-                });
+        var incrementer = function () {
+            if((worked.seconds + 1) == 60) {
+                worked.seconds = 0;
+                worked.minutes++;
+            } else {
+                worked.seconds++;
+            }
+            if (worked.minutes == 60) {
+                worked.hour++;
+                worked.minutes = 0;
+            }
+            //- console.log(worked)
+            document.getElementById('incrementing-timer').innerHTML = `Time Worked: ${worked.hours < 10 ? '0' + worked.hours : worked.hours}:${worked.minutes < 10 ? '0' + worked.minutes : worked.minutes}:${worked.seconds < 10 ? '0' + worked.seconds : worked.seconds}`;
+        }
+
+        var timeBlocks = !{JSON.stringify(task.with.timeBlocks)};
+
+        if (timeBlocks.length > 0) {
+           var timeBlock = timeBlocks[0];
+           window.timerId = setInterval(incrementer, 1000);
+        }
+
+        var starttimer = function (event) {
+            var el = event.target;
+            var taskId = this.getAttribute('data-taskId');
+            var projectId = this.getAttribute('data-projectId');
+            
+            var req = new Promise(function (resolve, reject) {
+                superagent
+                    .post(`/time-blocks`)
+                    .set('Content-Type', 'application/json')
+                    .set('Accept', 'application/json')
+                    .send({taskId, projectId})
+                    .end(function (err, res) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(res.body);
+                        }
+                    });
             });
+
+            req.then(function (result) {
+                el.classList.remove('btn-info');
+                el.classList.add('btn-warning');
+                el.innerHTML = 'Stop Timer';
+                el.id = 'stoptimer';
+                el.setAttribute('data-original-title', 'Stop working on task')
+                timeBlock = result;
+
+                el.removeEventListener('mouseup', starttimer);
+                el.addEventListener('mouseup', stoptimer);
+
+                window.timerId = setInterval(incrementer, 1000);
+
+            }).catch(function (err) {
+                console.error(err);
+            });
+        }
+
+        var stoptimer = function (event) {
+            var el = event.target;
+            var taskId = this.getAttribute('data-taskId');
+            var projectId = this.getAttribute('data-projectId');
+            
+            var req = new Promise(function (resolve, reject) {
+                superagent
+                    .post(`/time-blocks/${timeBlock.id}`)
+                    .set('Accept', 'application/json')
+                    .end(function (err, res) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(res.body);
+                        }
+                    });
+            });
+
+            req.then(function (result) {
+                el.classList.remove('btn-warning');
+                el.classList.add('btn-info');
+                el.innerHTML = 'Start Timer';
+                el.id = 'timer';
+                el.setAttribute('data-original-title', 'Start working on task')
+                timeBlock = null;
+
+                el.removeEventListener('mouseup', stoptimer);
+                el.addEventListener('mouseup', starttimer);
+
+                clearInterval(window.timerId);
+            }).catch(function (err) {
+                console.error(err);
+            });
+        }
+
+        if (document.getElementById('timer')) {
+            document.getElementById('timer').addEventListener('mouseup', starttimer);
         }
 
 
         if (document.getElementById('stoptimer')) {
-            document.getElementById('stoptimer').addEventListener('mouseup', function (event) {
-                var el = this;
-                var taskId = this.getAttribute('data-taskId');
-                var projectId = this.getAttribute('data-projectId');
-                var timeBlock = !{JSON.stringify(timeBlock)};
-                
-                var req = new Promise(function (resolve, reject) {
-                    superagent
-                        .post(`/time-blocks/${timeBlock.id}`)
-                        .set('Accept', 'application/json')
-                        .end(function (err, res) {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve(res.body);
-                            }
-                        });
-                });
-
-                req.then(function (result) {
-                    console.log(result);
-                }).catch(function (err) {
-                    console.error(err);
-                });
-            });
+            document.getElementById('stoptimer').addEventListener('mouseup', stoptimer);
         }
 
         $(function () {

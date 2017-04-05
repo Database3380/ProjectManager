@@ -3,8 +3,8 @@ extends ../splash
 block content
     div.main.container
         div.row.align-items-center.justify-content-center
-            div.col-4.login
-                h2 Login
+            div.col-5.login
+                h2 Log In
                 form(method='POST', action='/auth/login')
                     div.form-group
                         //- label(for='email') Email
@@ -15,4 +15,4 @@ block content
                         input#password.form-control(type='password', name='password', value='secret', placeholder='Password')
 
                     div.form-group
-                        button.btn.btn-primary.w-100(type='submit') Login
+                        button.btn.btn-primary.w-100.cyan-background(type='submit') Log In
