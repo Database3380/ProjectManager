@@ -598,7 +598,6 @@ Request.prototype._getFormData = function(){
  */
 
 Request.prototype.callback = function(err, res){
-  // console.log(this._retries, this._maxRetries)
   if (this._maxRetries && this._retries++ < this._maxRetries && shouldRetry(err, res)) {
     return this._retry();
   }

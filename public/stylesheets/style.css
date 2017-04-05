@@ -4,11 +4,11 @@ html, body {
 }
 
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 14px 'Rubik', sans-serif;
 }
 
 a {
-  color: #ff0700;
+  color: #00BCD4;
 }
 
 ul.navbar-nav {
@@ -55,10 +55,29 @@ ul.navbar-nav {
 .login {
   background: #fff;
   border: 1px solid #fff;
-  border-radius: 3px;
-  padding: 25px;
+  border-radius: 2px;
+  padding: 35px;
   text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.156863) 0px 3px 10px, rgba(0, 0, 0, 0.227451) 0px 3px 10px;
 }
+
+.login > h2 {
+  margin-bottom: 1em;
+}
+
+.login > form > .form-group > input.form-control {
+  line-height: 1.8;
+  border-radius: 2px;
+  font-size: 18px;
+}
+
+.login > form > .form-group > .btn.btn-primary {
+    line-height: 1.8;
+    font-size: 18px;
+    border-radius: 2px;
+    border: 1px solid #00BCD4;
+}
+
 
 .completed {
   fill: limegreen;
@@ -112,6 +131,10 @@ ul.navbar-nav {
   line-height: 26px;
 }
 
+.v-center-30 {
+  line-height: 30px;
+}
+
 .list-group-item-action:hover {
   background: #efefef;
 }
@@ -125,6 +148,14 @@ ul.navbar-nav {
   text-decoration: none;
 }
 
+
+.create-btn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+}
+
+/* Colors */
 .red {
   color: #F44336;
 }
@@ -300,4 +331,17 @@ ul.navbar-nav {
 
 .bluegrey-background:hover {
   background-color: #546E7A;
+}
+
+.light-text {
+  color: white;
+}
+
+#clock {
+  height: 30px;
+  width: 30px;
+}
+
+.card {
+  margin: 20px 0;
 }
