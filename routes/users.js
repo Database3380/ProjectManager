@@ -1,6 +1,7 @@
 /********************************************************/
 // Package Imports
 var router = require('express').Router();
+var _ = require('lodash');
 
 // Util Imports
 var hash = require('../util/functions/hash');
@@ -42,7 +43,8 @@ router.post('/', async function (req, res, next) {
     return next(err);
   }
 
-  res.json(newUser);
+  res.redirect('/dashboard');
+  // res.json(newUser);
 });
 
 router.get('/create', async function (req, res, next) {
@@ -62,10 +64,32 @@ router.get('/create', async function (req, res, next) {
 
     res.render('creation/user', { 
       title: 'New User', 
-      auth: Boolean(req.session.user), 
+      auth: req.auth, 
+      user: user,
       departments: departments,
       admin: user.admin 
     });
+});
+
+router.get('/:id', async function (req, res, next) {
+  var loggedIn = new User(req.session.user);
+  var id = req.params.id;
+
+  try {
+    var user = await User.where('id', id).with('tasks', 'projects', 'department').limit(1).first();
+  } catch (err) {
+    return next(err);
+  }
+
+  user.with.projects = _.sortBy(user.with.projects, 'dueDate');
+  user.with.tasks = _.sortBy(user.with.tasks, ['completed', 'dueDate']);
+  
+  res.render('user', {
+    title: `Project Manager | ${user.name}`,
+    auth: req.auth,
+    user: loggedIn,
+    data: user
+  });
 });
 
 

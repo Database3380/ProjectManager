@@ -36,31 +36,47 @@ router.post('/', async function (req, res, next) {
         return next(err);
     }
 
-    res.json(newDepartment);
+    req.redirect('/dashboard');
+    // res.json(newDepartment);
 });
 
 router.get('/create', async function (req, res, next) {
-
+    var user = new User(req.session.user);
+    
     try {
         var users = await User.get();
     } catch (err) {
         return next(err);
     }
 
-    res.render('creation/department', { title: 'New Department', auth: Boolean(req.session.user), users: users });
+    res.render('creation/department', { 
+        title: 'New Department', 
+        auth: req.auth, 
+        user: user,
+        users: users 
+    });
 });
 
 /* Show Department With Id */
 router.get('/:id', async function (req, res, next) {
-  var id = req.params.id;
+    var user = new User(req.session.user);
+    var id = req.params.id;
 
-  try {
-    var department = await Department.where('id', id).limit(1).first();
-  } catch (err) {
-      return next(err);
-  }
+    try {
+        var department = await Department.where('id', id).limit(1).with('users', 'projects').first();
+        if (department.userId) {
+            department.with.user = await department.user().first();
+        }
+    } catch (err) {
+        return next(err);
+    }
 
-  res.render('index', { title: `Department with id = ${id}`, results: [department], auth: req.auth });
+    res.render('department', { 
+        title: `Project Manager | ${department.name}`,  
+        auth: req.auth ,
+        user: user,
+        department: department
+    });
 });
 
 

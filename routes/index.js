@@ -13,8 +13,6 @@ router.get('/', function(req, res, next) {
   } else {
     res.redirect('/auth/login');
   }
-  // console.log(Project);
-  // console.log(Task);
 
   // res.render('index', { title: 'Homepage', results: [], auth: req.auth });
 });

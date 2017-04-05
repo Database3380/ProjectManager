@@ -38,7 +38,8 @@ router.post('/', async function (req, res, next) {
         return next(err);
     }
 
-    res.json(newProject);
+    res.redirect('/dashboard');
+    // res.json(newProject);
 });
 
 router.get('/create', async function (req, res, next) {
@@ -64,6 +65,7 @@ router.get('/create', async function (req, res, next) {
     res.render('creation/project', { 
         title: 'New Project', 
         auth: req.auth, 
+        user: user,
         users: users, 
         departments: departments 
     });

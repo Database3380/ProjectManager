@@ -5,14 +5,18 @@ var _ = require('lodash');
 var authOnly = require('../middleware/auth-only');
 var User = require('../models/user');
 
+router.use(authOnly);
+
 router.get('/', async function (req, res, next) {
     var user = new User(req.session.user);
 
     try {
         var tasks = await user.tasks().where('completed', false).with('project').get();
+        var currentTimeBlock = await user.timeBlocks().where('end_time', null).limit(1).first();
     } catch (err) { 
         return next(err);
     }
+
     tasks = _.sortBy(tasks, 'dueDate');
     var projects = _.sortBy(_.uniqBy(tasks.map(task => task.with.project), 'id'), 'dueDate');
 
@@ -21,7 +25,8 @@ router.get('/', async function (req, res, next) {
         auth: Boolean(user), 
         user: user, 
         completed: false, 
-        tasks: tasks, 
+        tasks: tasks,
+        currentTask: currentTimeBlock ? currentTimeBlock.taskId : null, 
         projects: projects 
     });
 });

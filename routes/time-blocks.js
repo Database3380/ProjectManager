@@ -58,7 +58,7 @@ router.post('/:id', async function (req, res, next) {
     } catch (err) {
         return next(err);
     }
-    console.log(newTimeBlock);
+
     res.json(newTimeBlock);
 })
 
