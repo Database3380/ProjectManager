@@ -14,11 +14,11 @@ class Department extends Model {
         }
     }
 
-    employees() {
+    users() {
         return this.hasMany(User);
     }
 
-    manager() {
+    user() {
         return this.belongsTo(User);
     }
 

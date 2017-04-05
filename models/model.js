@@ -34,7 +34,6 @@ class Model {
      ***************************/
 
     hasOne(model) {
-        // `SELECT * FROM ${model}s WHERE ${snakeCase(this.constructor.name)}_id = ${this.id}`
         return model.where(`${this.constructor.name.toLowerCase()}_id`, this.id).limit(1);
     }
 
@@ -256,7 +255,7 @@ class Model {
         }).concat([`$$${stamp}$$`, `$$${stamp}$$`]).join(', ');
 
         this.query = `INSERT INTO ${snakeCase(this.constructor.name)}s (${keys}) VALUES (${values}) RETURNING *`;
-        console.log(this.query)
+    
         try {
             var result = await pool.query(this.query);
         } catch (err) {
