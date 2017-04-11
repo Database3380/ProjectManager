@@ -7,23 +7,36 @@ html
 
     block head
   body
-    div.container-fluid.d-flex(style='padding: 0; color: #2A5DB0; font-weight:bold')
+    div.container-fluid.d-flex(style='padding: 0; color: #2A5DB0; font-weight:bold; background:FFD700')
       div.d-flex.flex-column
         p
+        if auth
           Strong Sidebar 
           br
           br
           br
-          a(href="http://192.168.99.100:3000/auth/login" style='color: #2A5DB0;') Login page
+          a(href="http://198.199.117.190/auth/login" style='color: #2A5DB0;') Login page
           br
           br
-          a(href="http://192.168.99.100:3000/departments" style='color: #2A5DB0;') Department page
+          a(href="http://198.199.117.190/departments" style='color: #2A5DB0;') Department page
           br
           br
-          a(href="http://192.168.99.100:3000/users" style='color: #2A5DB0;') Users page
+          a(href="http://198.199.117.190/Users" style='color: #2A5DB0;') Users page
           br
           br
-          a(href="http://192.168.99.100:3000/tasks" style='color: #2A5DB0;') Tasks page
+          a(href="http://198.199.117.190/Tasks" style='color: #2A5DB0;') Tasks page
+          
+        else if !auth
+         Strong Sidebar 
+          br
+          br
+          a(href="http://198.199.117.190/departments" style='color: #2A5DB0;') Department page
+          br
+          br
+          a(href="http://198.199.117.190/Users" style='color: #2A5DB0;') Users page
+          br
+          br
+          a(href="http://198.199.117.190/Tasks" style='color: #2A5DB0;') Tasks page
 
          
       div.d-flex.flex-column.w-100
