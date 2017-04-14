@@ -12,7 +12,7 @@ var authOnly = require('../middleware/auth-only');
 var _ = require('lodash');
 /********************************************************/
 
-// router.use(authOnly);
+router.use(authOnly);
 
 /* Get all projects */
 router.get('/', async function (req, res, next) {

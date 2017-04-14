@@ -10,7 +10,7 @@ var User = require('../models/user');
 var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
-// router.use(authOnly);
+router.use(authOnly);
 
 /* Get Departments */
 router.get('/', async function (req, res, next) {

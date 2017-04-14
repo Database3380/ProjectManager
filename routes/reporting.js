@@ -9,6 +9,10 @@ var PastDue = require('../models/past-due');
 var _ = require('lodash');
 var milliToTime = require('../util/functions/milliToTime');
 
+var authOnly = require('../middleware/auth-only');
+
+router.use(authOnly);
+
 router.get('/', function (req, res, next) {
     var user = new User(req.session.user);
 

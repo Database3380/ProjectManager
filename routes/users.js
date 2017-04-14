@@ -15,7 +15,7 @@ var Department = require('../models/department');
 var authOnly = require('../middleware/auth-only');
 /********************************************************/
 
-// router.use(authOnly);
+router.use(authOnly);
 
 
 /* GET users listing. */
