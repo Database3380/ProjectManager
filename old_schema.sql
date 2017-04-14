@@ -37,22 +37,6 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 SET search_path = public, pg_catalog;
 
---
--- Name: copy_pastdue(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION copy_pastdue() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-INSERT INTO past_dues (task_id, user_id, due_date, completed_date) VALUES (new.id, new.user_id, new.due_date, new.updated_at);
-RETURN new;
-END;
-$$;
-
-
-ALTER FUNCTION public.copy_pastdue() OWNER TO postgres;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -65,8 +49,8 @@ CREATE TABLE departments (
     id integer NOT NULL,
     name character varying NOT NULL,
     user_id integer,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -94,42 +78,6 @@ ALTER SEQUENCE departments_id_seq OWNED BY departments.id;
 
 
 --
--- Name: past_dues; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE past_dues (
-    id integer NOT NULL,
-    task_id integer NOT NULL,
-    user_id integer NOT NULL,
-    due_date date NOT NULL,
-    completed_date date NOT NULL
-);
-
-
-ALTER TABLE past_dues OWNER TO postgres;
-
---
--- Name: past_due_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE past_due_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE past_due_id_seq OWNER TO postgres;
-
---
--- Name: past_due_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE past_due_id_seq OWNED BY past_dues.id;
-
-
---
 -- Name: projects; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -141,8 +89,8 @@ CREATE TABLE projects (
     due_date date NOT NULL,
     user_id integer NOT NULL,
     department_id integer NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -178,12 +126,12 @@ CREATE TABLE tasks (
     name character varying NOT NULL,
     description text NOT NULL,
     due_date date NOT NULL,
+    completed boolean NOT NULL DEFAULT false, 
+    user_initials character varying NOT NULL DEFAULT $$NA$$,
     user_id integer NOT NULL,
     project_id integer NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    completed boolean DEFAULT false NOT NULL,
-    user_initials character varying DEFAULT 'NA'::character varying NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -221,8 +169,8 @@ CREATE TABLE time_blocks (
     project_id integer NOT NULL,
     start_time timestamp with time zone NOT NULL,
     end_time timestamp with time zone,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -261,8 +209,8 @@ CREATE TABLE users (
     pay_rate real NOT NULL,
     admin boolean DEFAULT false NOT NULL,
     department_id integer NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 
@@ -294,13 +242,6 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 --
 
 ALTER TABLE ONLY departments ALTER COLUMN id SET DEFAULT nextval('departments_id_seq'::regclass);
-
-
---
--- Name: past_dues id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY past_dues ALTER COLUMN id SET DEFAULT nextval('past_due_id_seq'::regclass);
 
 
 --
@@ -345,14 +286,6 @@ ALTER TABLE ONLY departments
 
 ALTER TABLE ONLY departments
     ADD CONSTRAINT departments_pkey PRIMARY KEY (id);
-
-
---
--- Name: past_dues past_due_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY past_dues
-    ADD CONSTRAINT past_due_pkey PRIMARY KEY (id);
 
 
 --
@@ -412,13 +345,6 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: tasks add_to_pastdue; Type: TRIGGER; Schema: public; Owner: postgres
---
-
-CREATE TRIGGER add_to_pastdue AFTER UPDATE ON tasks FOR EACH ROW WHEN (((new.completed = true) AND (new.updated_at > new.due_date))) EXECUTE PROCEDURE copy_pastdue();
-
-
---
 -- Name: projects department_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -459,14 +385,6 @@ ALTER TABLE ONLY time_blocks
 
 
 --
--- Name: past_dues task_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY past_dues
-    ADD CONSTRAINT task_id FOREIGN KEY (task_id) REFERENCES tasks(id);
-
-
---
 -- Name: departments user_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -495,14 +413,6 @@ ALTER TABLE ONLY tasks
 --
 
 ALTER TABLE ONLY time_blocks
-    ADD CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users(id);
-
-
---
--- Name: past_dues user_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY past_dues
     ADD CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users(id);
 
 
