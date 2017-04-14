@@ -30,7 +30,7 @@ class Project extends Model {
         return this.hasMany(Task);
     }
 
-    time() {
+    timeBlocks() {
         return this.hasMany(TimeBlock);
     }
 }
