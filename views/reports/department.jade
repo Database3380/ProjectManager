@@ -1,0 +1,43 @@
+extends ../layout
+
+block content
+    div.container
+        div.list-group
+
+            div.list-group-item
+                if departments
+                    h4= `Report For All Departments | ${period}` 
+                else
+                    h4= `Report For ${department.name} | ${period}`
+            div.list-group-item
+                table(width='65%')
+                    thead
+                        if departments
+                            tr
+                                td(width='50%'): strong Department Name 
+                                td(width='50%'): strong Time Worked During Period
+                        if projects
+                            tr 
+                                td(width='50%'): strong Project Name
+                                td(width='50%'): strong Time Worked During Period
+                        if users
+                            tr 
+                                td(width='50%'): strong User Name
+                                td(width='50%'): strong Time Worked During Period
+                    tbody
+                        if departments
+                            for department in departments
+                                tr
+                                    td= department.name
+                                    td= department.worked
+                        if projects
+                            for project in projects
+                                tr
+                                    td= project.name
+                                    td= project.worked
+
+                        if users
+                            for user in users
+                                tr
+                                    td= user.name
+                                    td= user.worked

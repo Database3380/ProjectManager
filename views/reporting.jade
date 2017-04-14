@@ -1,0 +1,88 @@
+extends layout
+
+block content
+    div.container.d-flex.flex-column.align-items-center.justify-content-center
+        a.btn.btn-secondary(href='/reporting/past-due', style='position: absolute; top: 20px; right: 20px;') Past Due
+        h4(style='margin-top: 20px;') Generate Report
+        div.card.w-50
+            div.card-block
+                div.d-flex.justify-content-around
+                    a.btn.btn-default(href='/reporting/department') By Department
+                    a.btn.btn-default(href='/reporting/project') By Project
+                    a.btn.btn-default(href='/reporting/user') By User
+            if departments || projects || users
+                div.card-block(style='border-top: 1px solid rgba(0,0,0,.125);')
+                    form#reporting(method='POST', action=(departments) ? '/reporting/department' : (projects) ? '/reporting/project' : '/reporting/user')
+                        if departments
+                            div.form-group
+                                label(for='department') Department
+                                select#department.form-control(name='departmentId')
+                                    option(value='All', selected) All Departments
+                                    for department in departments
+                                        option(value=department.id)= department.name
+                            div.form-group
+                                label(for='delineate') Seperate By
+                                select#delineate.form-control(name='delineate', disabled)
+                                    option(value='project') Project
+                                    option(value='user') User
+                                    
+                        if projects
+                            div.form-group
+                                label(for='project') Project
+                                select#project.form-control(name='projectId')
+                                    option(value='All', selected) All Projects
+                                    for project in projects
+                                        option(value=project.id)= project.name
+                            div.form-group
+                                label(for='delineate') Seperate By
+                                select#delineate.form-control(name='delineate', disabled)
+                                    option(value='task') Task
+                                    option(value='user') User
+                        if users
+                            div.form-group
+                                label(for='user') User
+                                select#user.form-control(name='userId')
+                                    option(value='All', selected) All Users
+                                    for user in users
+                                        option(value=user.id)= user.name
+                        if departments || projects || users
+                            div.form-group
+                                label(for='startDate') Start Date
+                                input#startDate.form-control(name='startDate', type='date', max=new Date().toISOString().substr(0,10))
+                            div.form-group
+                                label(for='endDate') End Date
+                                input#endDate.form-control(name='endDate', type='date', max=new Date().toISOString().substr(0,10))
+                            
+                            div.form-group
+                                button.btn.btn-primary(type='submit') Run Report
+
+block foot
+    if departments
+        script.
+            document.getElementById('department').addEventListener('change', function (event) {
+                if (event.target.value == 'All') {
+                    document.getElementById('delineate').setAttribute('disabled', true);
+                } else {
+                    document.getElementById('delineate').removeAttribute('disabled');
+                }
+            });
+
+    if projects
+        script.
+            document.getElementById('project').addEventListener('change', function (event) {
+                if (event.target.value == 'All') {
+                    document.getElementById('delineate').setAttribute('disabled', true);
+                } else {
+                    document.getElementById('delineate').removeAttribute('disabled');
+                }
+            });
+
+    //- if users
+    //-     script.
+    //-         document.getElementById('user').addEventListener('change', function (event) {
+    //-             if (event.target.value != 'All') {
+    //-                 document.getElementById('delineate').setAttribute('disabled', true);
+    //-             } else {
+    //-                 document.getElementById('delineate').removeAttribute('disabled');
+    //-             }
+    //-         });

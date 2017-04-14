@@ -1,0 +1,23 @@
+extends ../layout
+
+
+block content
+    div.container
+        div.list-group
+            div.list-group-item
+                h4 Tasks Completed After Due Date
+            div.list-group-item
+                table
+                    thead
+                        tr
+                            td: strong Task Name
+                            td: strong User Name
+                            td: strong Due Date
+                            td: strong Completed Date
+                    tbody
+                        for pd in pastDues
+                            tr
+                                td= pd.with.task.name
+                                td= pd.with.user.name
+                                td= new Date(pd.dueDate).toDateString()
+                                td= new Date(pd.completedDate).toDateString()

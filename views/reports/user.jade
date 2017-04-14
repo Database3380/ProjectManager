@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+    div.container
+        div.list-group
+            div.list-group-item
+                if users
+                    h4= `Report For All Users | ${period}` 
+                else
+                    h4= `Report For ${rUser.name} | ${period}`
+            div.list-group-item
+                table(width='65%')
+                    thead
+                        if users
+                            tr
+                                td(width='50%'): strong User Name 
+                                td(width='50%'): strong Time Worked During Period
+                        if tasks
+                            tr 
+                                td(width='50%'): strong Task Name
+                                td(width='50%'): strong Time Worked During Period
+                    tbody
+                        if tasks
+                            for task in tasks
+                                tr
+                                    td= task.name
+                                    td= task.worked
+
+                        if users
+                            for user in users
+                                tr
+                                    td= user.name
+                                    td= user.worked
