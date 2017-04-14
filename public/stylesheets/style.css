@@ -345,3 +345,24 @@ ul.navbar-nav {
 .card {
   margin: 20px 0;
 }
+
+table {
+  background-color: rgb(255, 255, 255); width: 100%; border-collapse: collapse; border-spacing: 0px; table-layout: fixed; font-family: Roboto, sans-serif;
+}
+
+tbody {
+  height: inherit;
+}
+
+tr {
+  border-bottom: 1px solid rgb(224, 224, 224); color: rgba(0, 0, 0, 0.870588); height: 48px;
+}
+
+tr:last-of-type {
+  border-bottom: none;
+}
+
+td {
+  padding-left: 24px; padding-right: 24px; height: 48px; text-align: left; font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; background-color: inherit; width: 24px; cursor: inherit;
+}
+

@@ -2,6 +2,9 @@ doctype html
 
 html
   head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
     title= title
     include includes/head.jade
 
@@ -43,6 +46,7 @@ html
             a.dropdown-item(href='/projects/create') Project
             a.dropdown-item(href='/tasks/create') Task
             a.dropdown-item(href='/users/create') User
+            a.dropdown-item(href='/reporting') Report
      
     include includes/foot.jade
     block foot

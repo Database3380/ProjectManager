@@ -18,6 +18,7 @@ var tasks = require('./routes/tasks');
 var projects = require('./routes/projects');
 var timeBlocks  = require('./routes/time-blocks');
 var dashboard = require('./routes/dashboard');
+var reporting = require('./routes/reporting');
 
 var admin = require('./routes/admin');
 
@@ -56,6 +57,7 @@ app.use('/projects', projects);
 app.use('/time-blocks', timeBlocks);
 app.use('/dashboard', dashboard);
 app.use('/admin', admin);
+app.use('/reporting', reporting);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

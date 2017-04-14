@@ -1,4 +1,4 @@
-var milliToTime = function(milliseconds) {
+var milliToTime = function(milliseconds, toString = false) {
     // console.log(milliseconds);
    var x = Number(milliseconds) / 1000;
 
@@ -7,7 +7,7 @@ var milliToTime = function(milliseconds) {
    var minutes = x % 60;
    var hours = Math.floor(x / 60);
 
-   return {
+   return toString ? `${hours}:${minutes}:${seconds}` : {
        hours,
        minutes,
        seconds
