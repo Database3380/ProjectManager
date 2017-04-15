@@ -38,6 +38,10 @@ ul.navbar-nav {
   margin: 0 0 0 10px;
 }
 
+.check-mark-inactive-lg {
+  height: 30px;
+}
+
 .splash {
   display: flex;
   justify-content: center;

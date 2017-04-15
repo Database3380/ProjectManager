@@ -20,14 +20,20 @@ router.use(authOnly);
 
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
+    var user = new User(req.session.user);
 
     try {
-      var users = await User.get();
+        var users = await user.with('department').get();
     } catch (err) {
-      return next(err);
+        return next(err);
     }
 
-    res.render('index', { title: 'Users', results: users, auth: req.auth });
+    res.render('overviews/users', { 
+        title: 'users', 
+        auth: req.auth,
+        user,
+        users 
+    });
 });
 
 

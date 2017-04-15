@@ -10,7 +10,7 @@ block content
         div.list-group
             div.list-group-item.d-flex.w-100.justify-content-between
                 div.d-flex
-                    svg#complete.check-mark(class= task.completed ? 'completed' : '',xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", x="0px", y="0px", viewBox="0 0 100 100", enable-background="new 0 0 100 100", xml:space="preserve", data-toggle="tooltip", data-placement="bottom", title= task.completed ? 'Mark task incomplete' : 'Mark task complete' )
+                    svg#complete(class= (task.completed ? 'completed ' : '') + (task.userId != user.id ? 'check-mark-inactive-lg' : 'check-mark'),xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", x="0px", y="0px", viewBox="0 0 100 100", enable-background="new 0 0 100 100", xml:space="preserve", data-toggle="tooltip", data-placement="bottom", title= task.completed ? 'Mark task incomplete' : 'Mark task complete', disabled= task.userId != user.id)
                         g
                             path(fill="none", d="M49.999,6.957c-23.733,0-43.043,19.309-43.043,43.044c0,23.733,19.309,43.043,43.043,43.043   c23.735,0,43.044-19.309,43.044-43.043C93.043,26.266,73.734,6.957,49.999,6.957z M75.682,39.465L45.108,70.041   c-0.512,0.511-1.19,0.792-1.909,0.792c-0.721,0-1.401-0.281-1.911-0.792L24.317,53.069c-1.053-1.05-1.054-2.765-0.001-3.82   l5.683-5.684c1.022-1.02,2.801-1.018,3.819,0l9.38,9.379L66.183,29.96c1.016-1.022,2.799-1.024,3.819,0.002l5.68,5.68   c0.51,0.503,0.793,1.184,0.793,1.911C76.476,38.275,76.194,38.954,75.682,39.465z")
                             path#check(class= task.completed ? 'completed' : '', fill="none", d="M68.618,31.343c-0.285-0.285-0.768-0.283-1.049-0.002l-24.37,24.37L32.435,44.948   c-0.14-0.14-0.327-0.217-0.525-0.217c-0.2,0-0.387,0.077-0.528,0.218L25.7,50.631c-0.29,0.291-0.291,0.764-0.001,1.054   l16.972,16.972c0.281,0.281,0.767,0.283,1.054-0.001L74.3,38.08c0.142-0.141,0.22-0.329,0.22-0.527c0-0.2-0.076-0.386-0.216-0.524   L68.618,31.343z")
@@ -26,15 +26,16 @@ block content
                     a(href=`/projects/${task.with.project.id}`)
                         strong= task.with.project.name
                 div 
-                    if task.with.timeBlocks.length > 0
-                        button#stoptimer.btn.btn-sm.btn-warning(data-taskId= task.id, data-projectId= task.projectId, data-toggle="tooltip", data-placement="bottom", title='Stop working on task') Stop Timer 
-                    else
-                        button#timer.btn.btn-sm.btn-info(data-taskId= task.id, data-projectId= task.projectId, data-toggle="tooltip", data-placement="bottom", title='Start working on task') Start Timer
+                    if task.userId == user.id
+                        if task.with.timeBlocks.length > 0
+                            button#stoptimer.btn.btn-sm.btn-warning(data-taskId= task.id, data-projectId= task.projectId, data-toggle="tooltip", data-placement="bottom", title='Stop working on task') Stop Timer 
+                        else
+                            button#timer.btn.btn-sm.btn-info(data-taskId= task.id, data-projectId= task.projectId, data-toggle="tooltip", data-placement="bottom", title='Start working on task') Start Timer
             div.list-group-item.d-flex.justify-content-between
                 div.w-25.d-flex.justify-content-between
                     strong= 'Assigned To: '
-                    a(href='#')
-                        strong= user.name
+                    a(href=`/users/${task.userId}`)
+                        strong= task.with.user.name
                 div
                     div#incrementing-timer= `Time Worked: ${task.worked.hours < 10 ? '0' + task.worked.hours : task.worked.hours}:${task.worked.minutes < 10 ? '0' + task.worked.minutes : task.worked.minutes}:${task.worked.seconds < 10 ? '0' + task.worked.seconds : task.worked.seconds}`
             div.list-group-item
@@ -45,32 +46,36 @@ block foot
     script.
         document.getElementById('complete').addEventListener('mouseup', function (event) {
             var task = !{JSON.stringify(task)}
-            
-            var req = new Promise(function (resolve, reject) {
-                superagent
-                    .post(`/tasks/${task.id}/complete`)
-                    .set('Accept', 'application/json')
-                    .end(function (err, res) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(res.body)
-                        }
-                    });
-            });
+            var user = !{JSON.stringify(user)}
 
-            req.then(function(result) {
-                var circle = document.getElementById('complete');
-                circle.classList.toggle('completed')
-                if (circle.classList.contains('completed')) {
-                    circle.setAttribute('data-original-title', 'Mark task incomplete')
-                } else {
-                    circle.setAttribute('data-original-title', 'Mark task complete')
-                }
-                document.getElementById('check').classList.toggle('completed')
-            }).catch(function(err) {
-                console.error(err);
-            });
+            if (task.userId == user.id) {
+            
+                var req = new Promise(function (resolve, reject) {
+                    superagent
+                        .post(`/tasks/${task.id}/complete`)
+                        .set('Accept', 'application/json')
+                        .end(function (err, res) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(res.body)
+                            }
+                        });
+                });
+
+                req.then(function(result) {
+                    var circle = document.getElementById('complete');
+                    circle.classList.toggle('completed')
+                    if (circle.classList.contains('completed')) {
+                        circle.setAttribute('data-original-title', 'Mark task incomplete')
+                    } else {
+                        circle.setAttribute('data-original-title', 'Mark task complete')
+                    }
+                    document.getElementById('check').classList.toggle('completed')
+                }).catch(function(err) {
+                    console.error(err);
+                });
+            }
         });
 
         var worked = !{JSON.stringify(task.worked)}

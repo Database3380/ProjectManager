@@ -1,8 +1,8 @@
 extends layout.jade
 
 block content
-    .container
-        div.list-group
+    .container#container
+        div.list-group#list-group
             div.list-group-item.d-flex.w-100.justify-content-between
                 div.d-flex
                     svg#complete.check-mark(class= project.completed ? 'completed' : '',xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", x="0px", y="0px", viewBox="0 0 100 100", enable-background="new 0 0 100 100", xml:space="preserve", data-toggle="tooltip", data-placement="bottom", title= project.completed ? 'Mark project incomplete' : 'Mark project complete')
@@ -23,7 +23,7 @@ block content
                 div.col-2
                     strong Manager: 
                 div.col-10
-                    a(href='#')
+                    a(href=`/users/${project.userId}`)
                         strong= project.with.user.name
             div.list-group-item.align-items-start
                 div.col-2
@@ -71,14 +71,26 @@ block foot
             });
 
             req.then(function(result) {
-                var circle = document.getElementById('complete');
-                circle.classList.toggle('completed')
-                if (circle.classList.contains('completed')) {
-                    circle.setAttribute('data-original-title', 'Mark task incomplete')
+                if (result.error) {
+                    var err = document.createElement('div');
+                    err.id = 'alert';
+                    err.classList.add('alert', 'alert-danger');
+                    err.setAttribute('role', 'alert');
+                    err.innerHTML = result.error;
+                    document.getElementById('container').insertBefore(err, document.getElementById('list-group'));
+                    setTimeout(() => {
+                        document.getElementById('alert').remove();
+                    }, 3000);
                 } else {
-                    circle.setAttribute('data-original-title', 'Mark task complete')
+                    var circle = document.getElementById('complete');
+                    circle.classList.toggle('completed')
+                    if (circle.classList.contains('completed')) {
+                        circle.setAttribute('data-original-title', 'Mark task incomplete')
+                    } else {
+                        circle.setAttribute('data-original-title', 'Mark task complete')
+                    }
+                    document.getElementById('check').classList.toggle('completed')
                 }
-                document.getElementById('check').classList.toggle('completed')
             }).catch(function(err) {
                 console.error(err);
             });

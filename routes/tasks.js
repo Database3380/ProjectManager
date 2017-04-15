@@ -85,7 +85,7 @@ router.get('/:id', async function (req, res, next) {
     var taskId = req.params.id;
 
     try {
-        var task = await user.tasks().where('id', taskId).with('project', 'timeBlocks').first();
+        var task = await Task.where('id', taskId).with('project', 'timeBlocks', 'user').first();
         // var activeTimeBlock = await user.timeBlocks().where('end_time', null).where('task_id', task.id).limit(1).first();
     } catch (err) {
         return next(err);

@@ -4,6 +4,8 @@ block content
     div.container.d-flex.align-items-center.justify-content-center
         div.card.w-50
             div.card-block
+                h4 Create Department
+            div.card-block(style='border-top: 1px solid rgba(0,0,0,.125);')
                 form#user-form(method='POST', action='/departments')
                     div.form-group
                         label(for='name') Name

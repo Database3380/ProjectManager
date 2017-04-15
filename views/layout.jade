@@ -11,18 +11,21 @@ html
     block head
   body
     div.container-fluid.d-flex(style='padding: 0;')
-      div.d-flex.flex-column
-        p
-          strong Sidebar
       div.d-flex.flex-column.w-100
         nav.navbar.navbar-toggleable-md.navbar-light(style='background: #eee;')
           div.container
-            button.navbar-toggler.navbar-toggler-right(type='button', data-toggel='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle Navigation')
+            button.navbar-toggler.navbar-toggler-right(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle Navigation')
               span.navbar-toggler-icon
             if auth
               a.navbar-brand(href='/dashboard') Project
+              if user.admin
+                a.nav-link(href='/departments') Departments
+              a.nav-link(href='/projects') Projects
+              a.nav-link(href='/users') Users
+              
             else
               a.navbar-brand(href='/') Project
+
             div#navbarNav.collapse.navbar-collapse
               ul.navbar-nav &nbsp;
               ul.navbar-nav.navbar-right.d-flex.justify-content-end
@@ -39,14 +42,15 @@ html
 
                 
         block content
-        div.btn-group.dropup.create-btn
-          button.btn.btn-secondary.dropdown-toggle.cyan-background.light-text(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') Create
-          div.dropdown-menu.dropdown-menu-right
-            a.dropdown-item(href='/departments/create') Department
-            a.dropdown-item(href='/projects/create') Project
-            a.dropdown-item(href='/tasks/create') Task
-            a.dropdown-item(href='/users/create') User
-            a.dropdown-item(href='/reporting') Report
+        if user.admin
+          div.btn-group.dropup.create-btn
+            button.btn.btn-secondary.dropdown-toggle.cyan-background.light-text(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') Create
+            div.dropdown-menu.dropdown-menu-right
+              a.dropdown-item(href='/departments/create') Department
+              a.dropdown-item(href='/projects/create') Project
+              a.dropdown-item(href='/tasks/create') Task
+              a.dropdown-item(href='/users/create') User
+              a.dropdown-item(href='/reporting') Report
      
     include includes/foot.jade
     block foot

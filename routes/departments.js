@@ -14,14 +14,26 @@ router.use(authOnly);
 
 /* Get Departments */
 router.get('/', async function (req, res, next) {
+    var user = new User(req.session.user);
 
     try {
         var departments = await Department.get();
+        departments = await Promise.all(departments.map(async (department) => {
+            if (department.userId) {
+                department.with.user = await User.where('id', department.userId).first();
+            }
+            return department;
+        }));
     } catch (err) {
         return next(err);
     }
 
-    res.render('index', { title: 'Departments', results: departments, auth: req.auth });
+    res.render('overviews/departments', { 
+        title: 'Departments', 
+        auth: req.auth,
+        user,
+        departments 
+    });
 });
 
 /* Store New Department */

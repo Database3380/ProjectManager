@@ -46,13 +46,13 @@ router.post('/department', async function (req, res, next) {
     try {
         if (departmentId == 'All') {
             var departments = await Department.get();
-            var projects = await Project.where('created_at', '<=', startDate).with('timeBlocks').get()
+            var projects = await Project.with('timeBlocks').get()
 
             departments = departments.map(function (department, index) {
                 department.worked = milliToTime(projects.filter(project => project.departmentId == department.id)
                                             .reduce((total, project) => {
                                                 var projTot = project.with.timeBlocks.reduce((acc, timeBlock) => {
-                                                    if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate)) {
+                                                    if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate).setHours(23, 59, 59)) {
                                                         return acc + timeBlock.duration;
                                                     } else {
                                                         return acc;
@@ -66,10 +66,10 @@ router.post('/department', async function (req, res, next) {
             var department = await Department.where('id', departmentId).first();
 
             if (delineate == 'project') {
-                var projects = await Project.where('department_id', departmentId).where('created_at', '<=', startDate).with('timeBlocks').get();
+                var projects = await Project.where('department_id', departmentId).with('timeBlocks').get();
                 projects = projects.map((project) => {
                     project.worked = milliToTime(project.with.timeBlocks.reduce((acc, timeBlock) => {
-                        if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate)) {
+                        if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate).setHours(23, 59, 59)) {
                             return acc + timeBlock.duration;
                         } else {
                             return acc;
@@ -79,10 +79,10 @@ router.post('/department', async function (req, res, next) {
                     return project;
                 });
             } else {
-                var users = await User.where('department_id', departmentId).where('created_at', '<=', startDate).with('timeBlocks').get();
+                var users = await User.where('department_id', departmentId).with('timeBlocks').get();
                 users = users.map((user) => {
                     user.worked = milliToTime(user.with.timeBlocks.reduce((acc, timeBlock) => {
-                        if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate)) {
+                        if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate).setHours(23, 59, 59)) {
                             return acc + timeBlock.duration;
                         } else {
                             return acc;
@@ -142,11 +142,11 @@ router.post('/project', async function (req, res, next) {
 
     try {
         if (projectId == 'All') {
-            var projects = await Project.where('created_at', '<=', startDate).with('timeBlocks').get();
+            var projects = await Project.with('timeBlocks').get();
 
             projects = projects.map((project) => {
                 project.worked = milliToTime(project.with.timeBlocks.reduce((acc, timeBlock) => {
-                    if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate)) {
+                    if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate).setHours(23, 59, 59)) {
                         return acc + timeBlock.duration;
                     } else {
                         return acc;
@@ -160,7 +160,7 @@ router.post('/project', async function (req, res, next) {
 
             var timeBlocks = [];
             project.with.timeBlocks.forEach((timeBlock) => {
-                if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate)) {
+                if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate).setHours(23, 59, 59)) {
                     let index = _.findIndex(timeBlocks, ['id', timeBlock[`${delineate}Id`]]);
                     if (index != -1) {
                         timeBlocks[index].duration += timeBlock.duration;
@@ -236,11 +236,11 @@ router.post('/user', async function (req, res, next) {
 
     try {
         if (userId == 'All') {
-            var users = await User.where('created_at', '<=', startDate).with('timeBlocks').get();
+            var users = await User.with('timeBlocks').get();
 
             users = users.map((user) => {
                 user.worked = milliToTime(user.with.timeBlocks.reduce((acc, timeBlock) => {
-                    if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate)) {
+                    if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate).setHours(23, 59, 59)) {
                         return acc + timeBlock.duration;
                     } else {
                         return acc;
@@ -254,7 +254,7 @@ router.post('/user', async function (req, res, next) {
 
             var timeBlocks = [];
             user.with.timeBlocks.forEach((timeBlock) => {
-                if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate)) {
+                if (new Date(timeBlock.startTime) >= new Date(startDate) && new Date(timeBlock.endTime) <= new Date(endDate).setHours(23, 59, 59)) {
                     let index = _.findIndex(timeBlocks, ['id', timeBlock.taskId]);
                     if (index != -1) {
                         timeBlocks[index].duration += timeBlock.duration;
@@ -283,7 +283,7 @@ router.post('/user', async function (req, res, next) {
         res.render('reports/user', { 
             title: 'Report for all users',
             auth: req.auth,
-            user,
+            user: curUser,
             period,
             users
         });

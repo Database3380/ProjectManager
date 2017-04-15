@@ -48,10 +48,10 @@ block content
                         if departments || projects || users
                             div.form-group
                                 label(for='startDate') Start Date
-                                input#startDate.form-control(name='startDate', type='date', max=new Date().toISOString().substr(0,10))
+                                input#startDate.form-control(required, name='startDate', type='date', max=new Date().toISOString().substr(0,10))
                             div.form-group
                                 label(for='endDate') End Date
-                                input#endDate.form-control(name='endDate', type='date', max=new Date().toISOString().substr(0,10))
+                                input#endDate.form-control(required, name='endDate', type='date', max=new Date().toISOString().substr(0,10))
                             
                             div.form-group
                                 button.btn.btn-primary(type='submit') Run Report

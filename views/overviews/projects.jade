@@ -1,0 +1,17 @@
+extends ../layout
+
+
+block content
+    div.container
+        div.list-group
+            div.list-group-item
+                h4 Projects
+            for project in projects
+                div.list-group-item.list-group-item-action(href=`/projects/${project.id}`)            
+                    div.d-flex.w-100.justify-content-between
+                        div.d-flex
+                            a(href=`/projects/${project.id}`): h5.mb-1.v-center-30(style='margin: 0 0 0 15px;')= project.name
+                        div.d-flex.justify-content-between(style='width: 20%')
+                            strong Manager:&nbsp;
+                            if (project.userId)
+                                a(href=`/users/${project.userId}`)= project.with.user.name

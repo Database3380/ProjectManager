@@ -21,8 +21,10 @@ router.post('/login', async function (req, res, next) {
 
     try {
         var user = await User.where('email', credentials.email).limit(1).first();
-        let hash = await user.hash();
-        var result = await compare(credentials.password, hash);
+        if (user) {
+            let hash = await user.hash();
+            var result = await compare(credentials.password, hash);
+        }
     } catch (err) {
         return next(err);
     }
@@ -35,7 +37,10 @@ router.post('/login', async function (req, res, next) {
             res.redirect('/dashboard');
         });
     } else {
-        res.redirect('/');
+        res.render('auth/login', {
+            title: 'Login | Db-Proj',
+            error: 'Username or Password are not valid.'
+        });
     }
 });
 

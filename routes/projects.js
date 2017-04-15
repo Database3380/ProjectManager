@@ -16,14 +16,26 @@ router.use(authOnly);
 
 /* Get all projects */
 router.get('/', async function (req, res, next) {
+    var user = new User(req.session.user);
 
     try {
         var projects = await Project.get();
+        projects = await Promise.all(projects.map(async (project) => {
+            if (project.userId) {
+                project.with.user = await User.where('id', project.userId).first();
+            }
+            return project;
+        }));
     } catch (err) {
         return next(err);
     }
 
-    res.render('index', { title: 'Projects', results: projects, auth: req.auth });
+    res.render('overviews/projects', { 
+        title: 'Projects', 
+        auth: req.auth,
+        user,
+        projects 
+    });
 });
 
 
@@ -73,7 +85,7 @@ router.get('/create', async function (req, res, next) {
 
 /* Get project with id */
 router.get('/:id', async function (req, res, next) {
-    var user = new User(user);
+    var user = new User(req.session.user);
     var id = req.params.id;
 
     try {
@@ -102,7 +114,7 @@ router.post('/:id/complete', async function (req, res, next) {
 
         incompleteTasks = project.with.tasks.filter(task => !task.complete);
         if (incompleteTasks.length > 0) {
-            throw new Error('All tasks must be complete to complete a project.');
+            var error = "All tasks must be completed before completing project.";
         } else {
             var result = await project.update({ complete: !project.complete });
         }
@@ -110,7 +122,7 @@ router.post('/:id/complete', async function (req, res, next) {
         return next(err);
     }
 
-    res.json(result);
+    res.json({result, error});
 });
 
 module.exports = router;

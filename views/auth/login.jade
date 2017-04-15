@@ -4,15 +4,16 @@ block content
     div.main.container
         div.row.align-items-center.justify-content-center
             div.col-5.login
+                if error
+                    div.alert.alert-danger(role='alert')
+                        strong Login Error:&nbsp;
+                        span= error
                 h2 Log In
                 form(method='POST', action='/auth/login')
                     div.form-group
-                        //- label(for='email') Email
-
                         input#email.form-control(type='email', name='email', value='dean@email.com', placeholder='Email Address')
                     div.form-group
-                        //- label(for='password') Password
                         input#password.form-control(type='password', name='password', value='secret', placeholder='Password')
-
                     div.form-group
                         button.btn.btn-primary.w-100.cyan-background(type='submit') Log In
+        
