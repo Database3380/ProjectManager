@@ -8,8 +8,12 @@ html
     block head
   body
     div.splash
-        block content
+      video(poster="/images/clouds.jpeg", autoplay="true", loop, playbackRate='0.5')
+        source(src="/images/Transitions.webm", type ="video/webm")
+      block content
     
 
     include includes/foot.jade
     block foot
+    script.
+      document.getElementsByTagName('video')[0].playbackRate = 0.75

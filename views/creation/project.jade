@@ -17,7 +17,7 @@ block content
                     div.d-flex
                         div.form-group.col-6(style='padding-left: 0;')
                             label(for='dueDate') Due Date 
-                            input#dueDate.form-control(name='dueDate', type='date', value=new Date().toISOString().substr(0,10))
+                            input#dueDate.form-control(name='dueDate', type='date', value=new Date().toISOString().substr(0,10), min=new Date().toISOString().substr(0,10))
                         div.form-group.col-6(style='padding-right: 0;')
                             label(for='budget') Budget
                             input#budget.form-control(name='budget', type='number', min='1.00', step='.01')
