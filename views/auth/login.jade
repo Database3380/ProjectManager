@@ -2,7 +2,8 @@ extends ../splash
 
 block content
     div.main.container
-        div.row.align-items-center.justify-content-center
+        div.row.align-items-center.justify-content-center.flex-column
+            h3(style='color: white; margin-bottom: 20px;') Project Manager
             div.col-5.login
                 if error
                     div.alert.alert-danger(role='alert')
