@@ -42,7 +42,7 @@ html
 
                 
         block content
-        if user.admin
+        if user && user.admin
           div.btn-group.dropup.create-btn
             button.btn.btn-secondary.dropdown-toggle.cyan-background.light-text(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') Create
             div.dropdown-menu.dropdown-menu-right
