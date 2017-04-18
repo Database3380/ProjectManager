@@ -22,6 +22,7 @@ router.get('/', async function (req, res, next) {
         var projects = await Project.get();
         projects = await Promise.all(projects.map(async (project) => {
             if (project.userId) {
+                project.with = {};
                 project.with.user = await User.where('id', project.userId).first();
             }
             return project;

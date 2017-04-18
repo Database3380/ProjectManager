@@ -20,10 +20,12 @@ router.get('/', async function (req, res, next) {
         var departments = await Department.get();
         departments = await Promise.all(departments.map(async (department) => {
             if (department.userId) {
+                department.with = {};
                 department.with.user = await User.where('id', department.userId).first();
             }
             return department;
         }));
+        console.log(departments);
     } catch (err) {
         return next(err);
     }
