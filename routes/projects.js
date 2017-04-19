@@ -19,7 +19,13 @@ router.get('/', async function (req, res, next) {
     var user = new User(req.session.user);
 
     try {
-        var projects = await Project.get();
+        var projects;
+        if (user.admin) {
+            projects = await Project.get();
+        } else {
+            projects = await Project.where('department_id', user.departmentId).get();
+        }
+        
         projects = await Promise.all(projects.map(async (project) => {
             if (project.userId) {
                 project.with = {};

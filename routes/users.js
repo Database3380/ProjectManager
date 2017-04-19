@@ -23,7 +23,13 @@ router.get('/', async function(req, res, next) {
     var user = new User(req.session.user);
 
     try {
-        var users = await user.with('department').get();
+
+        var users;
+        if (user.admin) {
+          users = await User.with('department').get();
+        } else {
+          users = await User.where('department_id', user.departmentId).with('departments').get();
+        }
     } catch (err) {
         return next(err);
     }

@@ -16,6 +16,10 @@ router.use(authOnly);
 router.get('/', async function (req, res, next) {
     var user = new User(req.session.user);
 
+    if (!user.admin) {
+        return redirect('/dashboard');
+    }
+    
     try {
         var departments = await Department.get();
         departments = await Promise.all(departments.map(async (department) => {
